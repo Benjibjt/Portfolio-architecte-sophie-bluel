@@ -23,6 +23,18 @@ function displayPortfolio(projects) {
     
 }
 
+// Fonction pour récupérer les projets du portfolio depuis l'API
+async function fetchProjects() {
+    try {
+        const response = await fetch('http://localhost:5678/api/works'); // fetch vaut GET par défaut + les projets sont nommés works dans l'API
+        const portfolioProjects = await response.json(); // Renomme "data" en "portfolioData"
+        displayPortfolio(portfolioProjects); // Appelle la fonction avec "portfolioProjects"
+    } catch (error) {
+        console.error('Erreur lors de la récupération des projets :', error);
+    }
+}
 
+// Appel de la fonction pour récupérer les projets du portfolio et les afficher
+fetchProjects();
 
 
