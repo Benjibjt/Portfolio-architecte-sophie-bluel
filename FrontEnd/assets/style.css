@@ -125,6 +125,24 @@ li:hover {
 	text-align: center;
 	margin-bottom: 1em;
 }
+
+/* Style nav menu */
+.button-menu {
+	display: flex;
+	justify-content: center;
+}
+
+/* Style de la liste du menu */
+.filter-menu {
+    display: flex;
+	justify-content: space-between;
+	width: 585px;
+	height: 38px;
+	border-radius: 60px;
+	border: 1px;
+}
+
+
 .gallery {
 	width: 100%;
 	display: grid;
