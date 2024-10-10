@@ -1,46 +1,77 @@
-
-//Fonction en vue d'afficher les éléments du portfolio
+// Fonction pour afficher les éléments du portfolio dans la galerie
 function displayPortfolio(projects) {
-    const gallery = document.getElementById('gallery');
+    const gallery = document.getElementById('gallery'); // Sélection de l'élément contenant la galerie
+    gallery.innerHTML = ''; // Vider la galerie pour éviter la duplication des éléments (après clic sur un filtre, la galerie est réinitialisée avec la catégorie sélectionnée)
 
-    //Boucle pour parcourir les projets - projects 
+    // Boucle pour parcourir chaque projet
     for (let i = 0; i < projects.length; i++) {
-        const figure = document.createElement('figure');
-        const img = document.createElement('img');
-        const figcaption = document.createElement('figcaption');
+        const figure = document.createElement('figure'); // Crée un élément <figure> pour chaque projet
+        const img = document.createElement('img'); // Crée un élément <img> pour l'image du projet
+        const figcaption = document.createElement('figcaption'); // Crée un élément <figcaption> pour le titre du projet
 
-        // En prévision de la récupération des données depuis la BDD
-        img.src = `${projects[i].imageUrl}`; // à la place on aura un lien vers BDD pour récupérer les images. Du genre "projects[i].imageUrl"
-        img.alt = `${projects[i].title}`; // le même que le figcaption. Idem on va récupérer ensuite les titres en BDD. Ex: "projects[i].title"
-        figcaption.textContent = `${projects[i].title}`; // idem 
+        // Assigner les données du projet aux éléments créés
+        img.src = projects[i].imageUrl; // Définir l'URL de l'image à partir des données du projet
+        img.alt = projects[i].title; // Définir l'attribut alt de l'image avec le titre du projet (pour l'accessibilité)
+        figcaption.textContent = projects[i].title; // Assigner le titre du projet comme texte du figcaption
 
-        // Assemble les éléments dans le DOM
-        gallery.appendChild(figure);
-        figure.appendChild(img);
-        figure.appendChild(figcaption);
+        // Ajout des éléments dans la structure DOM
+        gallery.appendChild(figure); // Ajouter l'ensemble <figure> dans la galerie
+        figure.appendChild(img); // Ajouter l'image au <figure>
+        figure.appendChild(figcaption); // Ajouter le titre <figcaption> au <figure>
 
     }
-    
 }
 
-// Fonction pour récupérer les projets du portfolio depuis l'API
+// Fonction pour récupérer les projets depuis l'API
 async function fetchProjects() {
     try {
-        const response = await fetch('http://localhost:5678/api/works'); // fetch vaut GET par défaut + les projets sont nommés works dans l'API
-        const portfolioProjects = await response.json(); // Renomme "data" en "portfolioData"
-        displayPortfolio(portfolioProjects); // Appelle la fonction avec "portfolioProjects"
+        const response = await fetch('http://localhost:5678/api/works');
+        const portfolioProjects = await response.json();
+        displayPortfolio(portfolioProjects); // Affiche tous les projets par défaut
+        setupFilters(portfolioProjects); // Configure les filtres
     } catch (error) {
         console.error('Erreur lors de la récupération des projets :', error);
     }
+}
+
+// Fonction pour filtrer les projets par catégorie
+function filterProjectsByCategory(projects, categoryId) {
+   // console.log('Filtre actif pour la catégorie :', categoryId);
+
+    let filteredProjects;
+    if (categoryId === 'Tous') {
+        filteredProjects = projects; // Affiche tous les projets
+    } else {
+        filteredProjects = projects.filter(project => project.categoryId === parseInt(categoryId));
+    }
+
+    // console.log('Projets filtrés :', filteredProjects); // Debug
+    displayPortfolio(filteredProjects); // Affiche les projets filtrés
+}
+
+// Fonction pour configurer les filtres
+function setupFilters(projects) {
+    const filterButtons = document.querySelectorAll('.filter-button');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Pour voir quel bouton est cliqué
+            // console.log('Bouton cliqué:', button.textContent);
+
+            // Enlève la classe 'active' de tous les boutons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            const categoryId = button.getAttribute('data-category');
+            // console.log('Filtrage de la catégorie:', categoryId); 
+
+            // Filtre les projets
+            filterProjectsByCategory(projects, categoryId);
+        });
+    });
 }
 
 // Appel de la fonction pour récupérer les projets du portfolio et les afficher
 fetchProjects();
 
 
-// Mise en place des boutons de filtrage
-const filterButton = document.getElementById('filterButton');
-filterButton.addEventListener('click', () => {
-  // Ajoutez ici le code de la fonction de filtrage
-  console.log('Le bouton de filtrage a été cliqué !'); // vérification avec console.log
-});
