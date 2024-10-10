@@ -38,3 +38,9 @@ async function fetchProjects() {
 fetchProjects();
 
 
+// Mise en place des boutons de filtrage
+const filterButton = document.getElementById('filterButton');
+filterButton.addEventListener('click', () => {
+  // Ajoutez ici le code de la fonction de filtrage
+  console.log('Le bouton de filtrage a été cliqué !'); // vérification avec console.log
+});
