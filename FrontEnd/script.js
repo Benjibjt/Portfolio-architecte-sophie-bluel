@@ -51,24 +51,24 @@ function filterProjectsByCategory(projects, categoryId) {
 
 // Fonction pour configurer les filtres
 function setupFilters(projects) {
-    const filterButtons = document.querySelectorAll('.filter-button');
+    const filterButtons = document.querySelectorAll('.filter-button'); // Sélectionne tous les boutons de filtre
 
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Pour voir quel bouton est cliqué
-            // console.log('Bouton cliqué:', button.textContent);
-
+    // Utilisation d'une boucle for pour ajouter l'écouteur d'événements à chaque bouton
+    for (let i = 0; i < filterButtons.length; i++) {
+        filterButtons[i].addEventListener('click', function () {
             // Enlève la classe 'active' de tous les boutons
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
+            for (let i = 0; i < filterButtons.length; i++) {
+                filterButtons[i].classList.remove('active');
+            }
+            this.classList.add('active'); // Ajoute la classe 'active' au bouton cliqué
 
-            const categoryId = button.getAttribute('data-category');
-            // console.log('Filtrage de la catégorie:', categoryId); 
+            const categoryId = this.getAttribute('data-category'); // Récupère la catégorie du bouton cliqué
+            // console.log('Filtrage de la catégorie:', categoryId);
 
             // Filtre les projets
-            filterProjectsByCategory(projects, categoryId);
+            filterProjectsByCategory(projects, categoryId); // Applique le filtre
         });
-    });
+    }
 }
 
 // Appel de la fonction pour récupérer les projets du portfolio et les afficher
