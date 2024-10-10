@@ -10,9 +10,9 @@ function displayPortfolio(projects) {
         const figcaption = document.createElement('figcaption');
 
         // En prévision de la récupération des données depuis la BDD
-        img.src = "Test image"; // à la place on aura un lien vers BDD pour récupérer les images. Du genre "projects[i].imageUrl"
-        img.alt = "Test titre"; // le même que le figcaption. Idem on va récupérer ensuite les titres en BDD. Ex: "projects[i].title"
-        figcaption.textContent = "Test titre"; // idem 
+        img.src = `${projects[i].imageUrl}`; // à la place on aura un lien vers BDD pour récupérer les images. Du genre "projects[i].imageUrl"
+        img.alt = `${projects[i].title}`; // le même que le figcaption. Idem on va récupérer ensuite les titres en BDD. Ex: "projects[i].title"
+        figcaption.textContent = `${projects[i].title}`; // idem 
 
         // Assemble les éléments dans le DOM
         gallery.appendChild(figure);
