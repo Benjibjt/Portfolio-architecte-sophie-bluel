@@ -39,10 +39,10 @@ function filterProjectsByCategory(projects, categoryId) {
    // console.log('Filtre actif pour la catégorie :', categoryId);
 
     let filteredProjects;
-    if (categoryId === 'Tous') {
+    if (categoryId === 0) {
         filteredProjects = projects; // Affiche tous les projets
     } else {
-        filteredProjects = projects.filter(project => project.categoryId === parseInt(categoryId));
+        filteredProjects = projects.filter(project => project.categoryId === categoryId);
     }
 
     // console.log('Projets filtrés :', filteredProjects); // Debug
@@ -55,15 +55,15 @@ function setupFilters(projects) {
 
     // Utilisation d'une boucle for pour ajouter l'écouteur d'événements à chaque bouton
     for (let i = 0; i < filterButtons.length; i++) {
-        filterButtons[i].addEventListener('click', function () {
+        filterButtons[i].addEventListener('click', function() {
             // Enlève la classe 'active' de tous les boutons
-            for (let i = 0; i < filterButtons.length; i++) {
-                filterButtons[i].classList.remove('active');
+            for (let j = 0; j < filterButtons.length; j++) {
+                filterButtons[j].classList.remove('active');
             }
             this.classList.add('active'); // Ajoute la classe 'active' au bouton cliqué
 
-            const categoryId = this.getAttribute('data-category'); // Récupère la catégorie du bouton cliqué
-            // console.log('Filtrage de la catégorie:', categoryId);
+            // Récupère la valeur du bouton cliqué (converti en nombre entier)
+            const categoryId = Number(this.getAttribute('data-category'));
 
             // Filtre les projets
             filterProjectsByCategory(projects, categoryId); // Applique le filtre
