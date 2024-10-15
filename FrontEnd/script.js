@@ -1,24 +1,23 @@
 // Fonction pour afficher les éléments du portfolio dans la galerie
 function displayPortfolio(projects) {
-    const gallery = document.getElementById('gallery'); // Sélection de l'élément contenant la galerie
-    gallery.innerHTML = ''; // Vider la galerie pour éviter la duplication des éléments (après clic sur un filtre, la galerie est réinitialisée avec la catégorie sélectionnée)
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = ''; // Vider la galerie pour éviter la duplication
 
-    // Boucle pour parcourir chaque projet
+    // Utilisation d'une boucle for pour parcourir les projets
     for (let i = 0; i < projects.length; i++) {
-        const figure = document.createElement('figure'); // Crée un élément <figure> pour chaque projet
-        const img = document.createElement('img'); // Crée un élément <img> pour l'image du projet
-        const figcaption = document.createElement('figcaption'); // Crée un élément <figcaption> pour le titre du projet
+        const project = projects[i]; // Accède à chaque projet
 
-        // Assigner les données du projet aux éléments créés
-        img.src = projects[i].imageUrl; // Définir l'URL de l'image à partir des données du projet
-        img.alt = projects[i].title; // Définir l'attribut alt de l'image avec le titre du projet (pour l'accessibilité)
-        figcaption.textContent = projects[i].title; // Assigner le titre du projet comme texte du figcaption
+        const figure = document.createElement('figure');
+        const img = document.createElement('img');
+        const figcaption = document.createElement('figcaption');
 
-        // Ajout des éléments dans la structure DOM
-        gallery.appendChild(figure); // Ajouter l'ensemble <figure> dans la galerie
-        figure.appendChild(img); // Ajouter l'image au <figure>
-        figure.appendChild(figcaption); // Ajouter le titre <figcaption> au <figure>
+        img.src = project.imageUrl;
+        img.alt = project.title;
+        figcaption.textContent = project.title;
 
+        figure.appendChild(img);
+        figure.appendChild(figcaption);
+        gallery.appendChild(figure);
     }
 }
 
@@ -27,8 +26,8 @@ async function fetchProjects() {
     try {
         const response = await fetch('http://localhost:5678/api/works');
         const portfolioProjects = await response.json();
-        displayPortfolio(portfolioProjects); // Affiche tous les projets par défaut
-        setupFilters(portfolioProjects); // Configure les filtres
+        displayPortfolio(portfolioProjects);
+        fetchFilterButtons(portfolioProjects); // Passe les projets pour configurer les filtres
     } catch (error) {
         console.error('Erreur lors de la récupération des projets :', error);
     }
@@ -36,40 +35,58 @@ async function fetchProjects() {
 
 // Fonction pour filtrer les projets par catégorie
 function filterProjectsByCategory(projects, categoryId) {
-   // console.log('Filtre actif pour la catégorie :', categoryId);
-
-    let filteredProjects;
-    if (categoryId === 0) {
-        filteredProjects = projects; // Affiche tous les projets
-    } else {
-        filteredProjects = projects.filter(project => project.categoryId === categoryId);
-    }
-
-    // console.log('Projets filtrés :', filteredProjects); // Debug
+    const filteredProjects = categoryId === 0 ? projects : projects.filter(project => project.categoryId === categoryId);
     displayPortfolio(filteredProjects); // Affiche les projets filtrés
+}
+
+// Fonction pour afficher les boutons de filtres par catégorie
+function displayFilterButtons(filterButtons) {
+    const buttonMenu = document.getElementById('button-menu');
+
+
+    // Ajout du bouton "Tous"
+    const allButton = document.createElement('button');
+    allButton.classList.add('filter-button');
+    allButton.setAttribute('data-category', 0);
+    allButton.textContent = "Tous";
+    buttonMenu.appendChild(allButton);
+
+    // Ajout des autres boutons de filtres
+    filterButtons.forEach(button => {
+        const ButtonFilter = document.createElement('button');
+        ButtonFilter.classList.add('filter-button');
+        ButtonFilter.setAttribute('data-category', button.id);
+        ButtonFilter.textContent = button.name;
+        buttonMenu.appendChild(ButtonFilter);
+    });
+}
+
+// Fonction pour récupérer les boutons de filtres depuis l'API
+async function fetchFilterButtons(projects) {
+    try {
+        const response = await fetch('http://localhost:5678/api/categories');
+        const filterButtons = await response.json();
+        displayFilterButtons(filterButtons);
+        setupFilters(projects); // Configure les filtres après l'ajout dynamique des boutons
+    } catch (error) {
+        console.error('Erreur lors de la récupération des boutons :', error);
+    }
 }
 
 // Fonction pour configurer les filtres
 function setupFilters(projects) {
-    const filterButtons = document.querySelectorAll('.filter-button'); // Sélectionne tous les boutons de filtre
+    const filterButtons = document.querySelectorAll('.filter-button');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
 
-    // Utilisation d'une boucle for pour ajouter l'écouteur d'événements à chaque bouton
-    for (let i = 0; i < filterButtons.length; i++) {
-        filterButtons[i].addEventListener('click', function() {
-            // Enlève la classe 'active' de tous les boutons
-            for (let j = 0; j < filterButtons.length; j++) {
-                filterButtons[j].classList.remove('active');
-            }
-            this.classList.add('active'); // Ajoute la classe 'active' au bouton cliqué
-
-            // Récupère la valeur du bouton cliqué (converti en nombre entier)
             const categoryId = Number(this.getAttribute('data-category'));
-
-            // Filtre les projets
-            filterProjectsByCategory(projects, categoryId); // Applique le filtre
+            filterProjectsByCategory(projects, categoryId);
         });
-    }
+    });
 }
+
 
 // Appel de la fonction pour récupérer les projets du portfolio et les afficher
 fetchProjects();
