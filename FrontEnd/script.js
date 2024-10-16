@@ -35,8 +35,20 @@ async function fetchProjects() {
 
 // Fonction pour filtrer les projets par catégorie
 function filterProjectsByCategory(projects, categoryId) {
-    const filteredProjects = categoryId === 0 ? projects : projects.filter(project => project.categoryId === categoryId);
-    displayPortfolio(filteredProjects); // Affiche les projets filtrés
+    let filteredProjects;
+
+    // Si la catégorie est 0, afficher tous les projets
+    if (categoryId === 0) {
+        filteredProjects = projects;
+    } else {
+        // Sinon, filtrer les projets selon l'ID de la catégorie
+        filteredProjects = projects.filter(function(project) {
+            return project.categoryId === categoryId;
+        });
+    }
+
+    // Afficher les projets filtrés dans la galerie
+    displayPortfolio(filteredProjects);
 }
 
 // Fonction pour afficher les boutons de filtres par catégorie
@@ -47,17 +59,31 @@ function displayFilterButtons(filterButtons) {
     // Ajout du bouton "Tous"
     const allButton = document.createElement('button');
     allButton.classList.add('filter-button');
+    allButton.classList.add('all-button'); //applique une classe supplémentaire à ce bouton
     allButton.setAttribute('data-category', 0);
     allButton.textContent = "Tous";
     buttonMenu.appendChild(allButton);
 
     // Ajout des autres boutons de filtres
-    filterButtons.forEach(button => {
+    filterButtons.forEach((button, index) => {
         const ButtonFilter = document.createElement('button');
         ButtonFilter.classList.add('filter-button');
         ButtonFilter.setAttribute('data-category', button.id);
         ButtonFilter.textContent = button.name;
         buttonMenu.appendChild(ButtonFilter);
+
+        if (index === 0) {
+            ButtonFilter.classList.add('filter-0');
+        }
+
+        if (index === 1) {
+            ButtonFilter.classList.add('filter-1');
+        }
+
+        if (index === 2) {
+            ButtonFilter.classList.add('filter-2');
+        }
+
     });
 }
 

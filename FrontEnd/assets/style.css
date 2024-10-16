@@ -121,27 +121,64 @@ li:hover {
 #introduction p {
 	margin-bottom: 0.5em;
 }
+
+/* ajout id portfolio */
+#portfolio {
+	display: flex;
+	flex-direction: column;
+}
+
 #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;
 }
 
 /* Style nav menu */
-.button-menu {
+#button-menu {
 	display: flex;
-	justify-content: center;
-}
-
-/* Style de la liste du menu */
-.filter-menu {
-    display: flex;
-	justify-content: space-between;
+	align-self: center;
 	width: 585px;
-	height: 38px;
-	border-radius: 60px;
-	border: 1px;
+	justify-content: space-between;
+/*	justify-content: center;  */
+	margin-bottom: 51px;
 }
 
+/* style général des boutons */
+.filter-button {
+	border-radius: 60px;
+	border-width: 1px;
+	height: 37px;
+	border-color: #1D6154;
+	color: #1D6154;
+	font-family: 'Syne', sans-serif;
+	font-weight: 700;
+}
+
+/* style complémentaire pour le 1er bouton */
+.all-button {
+	width: 100px;
+}
+
+/* style complémentaire pour le 2ème bouton */
+.filter-0 {
+	width: 100px;
+}
+
+/* style complémentaire pour le 3ème bouton */
+.filter-1 {
+	width: 157px;
+}
+
+/* style complémentaire pour le 4ème bouton */
+.filter-2 {
+	width: 198px;
+}
+
+/* ajout de la couleur sur le bouton cliqué */
+.active {
+	background-color: #1D6154;
+	color: white;
+}
 
 .gallery {
 	width: 100%;
