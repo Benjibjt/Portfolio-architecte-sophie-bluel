@@ -72,16 +72,16 @@ function displayFilterButtons(filterButtons) {
         ButtonFilter.textContent = button.name;
         buttonMenu.appendChild(ButtonFilter);
 
-        if (index === 0) {
-            ButtonFilter.classList.add('filter-0');
-        }
-
-        if (index === 1) {
-            ButtonFilter.classList.add('filter-1');
-        }
-
-        if (index === 2) {
-            ButtonFilter.classList.add('filter-2');
+        switch (index) {
+            case 0:
+                ButtonFilter.classList.add('filter-0');
+                break;
+            case 1:
+                ButtonFilter.classList.add('filter-1');
+                break;
+            case 2:
+                ButtonFilter.classList.add('filter-2');
+                break;
         }
 
     });
