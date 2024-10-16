@@ -118,3 +118,14 @@ function setupFilters(projects) {
 fetchProjects();
 
 
+// Récupère tous les liens du menu
+const links = document.querySelectorAll('ul li a');
+
+// Parcours chaque lien pour vérifier s'il correspond à l'URL actuelle
+links.forEach(link => {
+    if (link.href === window.location.href) {
+        // Ajoute la classe 'active' au lien correspondant à la page active
+        link.classList.add('nav-active');
+    }
+});
+
