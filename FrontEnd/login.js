@@ -1,28 +1,52 @@
 
-// Sélection des éléments du DOM
+// Sélection des éléments HTML
 const email = document.getElementById('email');
 const password = document.getElementById('password');
 const loginForm = document.getElementById('login-form');
 const errorMessage = document.getElementById('error-message');
 
-// Vérifie que l'élément loginForm existe avant d'ajouter l'écouteur d'événements
-if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Empêche le comportement par défaut du formulaire
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Empêche le rafraîchissement de la page après soumission du formulaire        
 
-        // Validation des champs d'entrée
-        if (!email.value.trim() || !password.value.trim()) {
+    // Validation des champs d'entrée
+    if (!email.value.trim() || !password.value.trim()) {
+        errorMessage.textContent = 'Veuillez remplir tous les champs.';
+        return;
+    }
+
+    // Si la validation passe, lancer la requête POST
+    await handleLogin(email.value, password.value);
+});
+
+// Fonction pour gérer la connexion
+async function handleLogin(email, password) {
+    try {
+        const response = await fetch('http://localhost:5678/api/users/login', { // URL de l'API
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            }),
+        });
+
+        // Vérifie la réponse du serveur
+        const data = await response.json();
+        if (response.ok) {
+            console.log('Connexion réussie', data);
+            window.location.href = 'index.html'; // Redirection vers la page d'accueil
+        } else {
             if (errorMessage) {
-                errorMessage.textContent = 'Veuillez remplir tous les champs.';
-            } else {
-                console.error('Element error-message non trouvé');
+                errorMessage.textContent = 'Identifiants incorrects.';
             }
-            return;
+            console.error('Identifiants incorrects', data.message);
         }
-
-        // Si la validation passe, possibilité de procéder avec la soumission ou d'autres actions
-        handleLogin(email.value, password.value);
-    });
-} else {
-    console.error('Element login-form non trouvé');
+    } catch (error) {
+        console.error('Erreur lors de la requête', error);
+        if (errorMessage) {
+            errorMessage.textContent = 'Une erreur est survenue. Veuillez réessayer.';
+        }
+    }
 }
