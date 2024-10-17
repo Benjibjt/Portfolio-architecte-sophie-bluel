@@ -36,6 +36,10 @@ async function handleLogin(email, password) {
         const data = await response.json();
         if (response.ok) {
             console.log('Connexion réussie', data);
+
+            // Stocker le token reçu dans le localStorage
+            localStorage.setItem("token", data.token);
+
             window.location.href = 'index.html'; // Redirection vers la page d'accueil
         } else {
             if (errorMessage) {
@@ -50,3 +54,5 @@ async function handleLogin(email, password) {
         }
     }
 }
+
+const token = localStorage.getItem("token");
