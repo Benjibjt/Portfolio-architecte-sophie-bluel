@@ -178,6 +178,7 @@ ul li a {
 	color: #1D6154;
 	font-family: 'Syne', sans-serif;
 	font-weight: 700;
+	cursor: pointer;
 }
 
 /* style complémentaire pour le 1er bouton */

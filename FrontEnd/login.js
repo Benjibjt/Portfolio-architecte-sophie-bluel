@@ -6,20 +6,20 @@ const loginForm = document.getElementById('login-form');
 const errorMessage = document.getElementById('error-message');
 
 loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); // Empêche le rafraîchissement de la page après soumission du formulaire        
+    e.preventDefault(); // Empêche le rafraîchissement de la page après soumission du formulaire (et permet la redirection après connexion, ou d'afficher les messages d'identifiants incorrects, etc)      
 
-    // Validation des champs d'entrée
+    // Validation des champs d'entrée (pas forcément utile car il y a déjà l'attribut required)
     if (!email.value.trim() || !password.value.trim()) {
         errorMessage.textContent = 'Veuillez remplir tous les champs.';
-        return;
-    }
+           return;
+        }
 
     // Si la validation passe, lancer la requête POST
-    await handleLogin(email.value, password.value);
+    await submitLogin(email.value, password.value);
 });
 
 // Fonction pour gérer la connexion
-async function handleLogin(email, password) {
+async function submitLogin(email, password) {
     try {
         const response = await fetch('http://localhost:5678/api/users/login', { // URL de l'API
             method: 'POST',
@@ -33,7 +33,7 @@ async function handleLogin(email, password) {
         });
 
         // Vérifie la réponse du serveur
-        const data = await response.json();
+        const data = await response.json(); //data correspond au contenu du corps de la réponse après traitement par response.json()
         if (response.ok) {
             console.log('Connexion réussie', data);
 

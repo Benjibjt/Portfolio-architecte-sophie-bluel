@@ -59,6 +59,7 @@ function displayFilterButtons(filterButtons) {
     // Ajout du bouton "Tous"
     const allButton = document.createElement('button');
     allButton.classList.add('filter-button');
+    allButton.classList.add('active');
     allButton.classList.add('all-button'); //applique une classe supplémentaire à ce bouton
     allButton.setAttribute('data-category', 0);
     allButton.textContent = "Tous";
