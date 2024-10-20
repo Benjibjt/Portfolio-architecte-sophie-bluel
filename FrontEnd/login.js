@@ -8,7 +8,7 @@ const errorMessage = document.getElementById('error-message');
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault(); // Empêche le rafraîchissement de la page après soumission du formulaire (et permet la redirection après connexion, ou d'afficher les messages d'identifiants incorrects, etc)      
 
-    // Validation des champs d'entrée (pas forcément utile car il y a déjà l'attribut required)
+    // Validation des champs d'entrée (il y a l'attribut required en HTML mais cela peut être utile en fonction du navigateur)
     if (!email.value.trim() || !password.value.trim()) {
         errorMessage.textContent = 'Veuillez remplir tous les champs.';
            return;

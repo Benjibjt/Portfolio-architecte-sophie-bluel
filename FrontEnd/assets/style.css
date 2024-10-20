@@ -207,6 +207,13 @@ ul li a {
 	color: white;
 }
 
+/* Message d'erreur */
+#error-message {
+	margin-top: 25px;
+	font-weight: bold;
+	color: red;
+}
+
 .gallery {
 	width: 100%;
 	display: grid;
