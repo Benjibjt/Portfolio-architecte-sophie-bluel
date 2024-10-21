@@ -61,13 +61,38 @@ body {
 	min-height: 1024px;
 }
 
+/* Ajout Conteneur principal */
 .main-container {
 	flex: 1;
-	 width: 79%;
-	 margin-left: auto;
-	 margin-right: auto;
+	width: 79%;
+	margin-left: auto;
+	margin-right: auto;
 } 
 
+/* Ajout TopBar */
+#topBar {
+    height: 59px;
+    width: 100%;
+    background-color: black;
+/*  display: none; /* Masqué par défaut */
+/*  position: absolute; /* Pour qu'elle reste en haut du header */
+    top: 0;
+    left: 0;
+/*	margin-bottom: 38px; */
+ 	z-index: 1000; /* Pour s'assurer qu'elle est au-dessus du reste */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Div pour le mode édition */
+.edition-mode {
+	width: 129px;
+	color: white;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
 
 header {
 	display: flex;
@@ -75,6 +100,13 @@ header {
 	margin: 50px 0;
 	max-width: 1140px;
 }
+
+/* Maj Icon Instagram */
+.instagram-icon {
+	width: 19.35px;
+	height: 19.35px;
+}
+
 section {
 	margin: 50px 0
 }
@@ -147,6 +179,13 @@ ul li a {
 
 #introduction p {
 	margin-bottom: 0.5em;
+}
+
+/* Projets en mode édition */
+.projects-edit {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
 }
 
 /* ajout id portfolio */
