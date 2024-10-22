@@ -130,3 +130,42 @@ links.forEach(link => {
     }
 });
 
+
+//* Gestion de la TopBar et de la Div Modify au Login et au Logout
+window.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token'); // Récupère le token dans localStorage
+    const modify = document.getElementById('modify');
+    const topBar = document.getElementById('topBar'); // Sélectionne l'élément avec l'id 'topBar'
+    
+
+    // Fonction pour mettre à jour la visibilité de la topBar et modify en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
+    function updateUI() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            topBar.classList.add('show');
+            modify.classList.add('shown'); // Affiche la div modify
+        } else {
+            topBar.classList.remove('show');
+            modify.classList.remove('shown'); // Cache la div modify
+        }
+    }
+
+    // Appel initial pour afficher/cacher la topBar + la Div Modify au chargement de la page
+    updateUI();
+
+ 
+
+    // Vérifie toutes les 500ms si le token a été supprimé & permet de MAJ à la fois la TopBar + la Div Modify
+    setInterval(() => {
+        updateUI();
+    }, 500);
+
+    
+
+});
+
+
+
+
+
+

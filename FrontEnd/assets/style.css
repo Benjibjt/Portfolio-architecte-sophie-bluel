@@ -69,20 +69,20 @@ body {
 	margin-right: auto;
 } 
 
-/* Ajout TopBar */
-#topBar {
-    height: 59px;
-    width: 100%;
+/* Cacher la topBar par défaut */
+.topBar {
+    display: none;
     background-color: black;
-/*  display: none; /* Masqué par défaut */
-/*  position: absolute; /* Pour qu'elle reste en haut du header */
-    top: 0;
-    left: 0;
-/*	margin-bottom: 38px; */
- 	z-index: 1000; /* Pour s'assurer qu'elle est au-dessus du reste */
-	display: flex;
-	align-items: center;
-	justify-content: center;
+    color: white;
+    height: 59px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Afficher la topBar quand la classe 'show' est présente */
+.topBar.show {
+    display: flex;
 }
 
 /* Div pour le mode édition */
@@ -186,6 +186,15 @@ ul li a {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+}
+
+/* Div Modifier */
+.modify {
+	display: none; 
+} 
+
+.shown {
+	display: flex;
 }
 
 /* ajout id portfolio */
