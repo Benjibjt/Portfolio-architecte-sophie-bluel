@@ -58,7 +58,7 @@ function displayFilterButtons(filterButtons) {
 
     // Ajout du bouton "Tous"
     const allButton = document.createElement('button');
-    allButton.classList.add('filter-button');
+    allButton.classList.add('filter-button', 'category-button');//ajout de la classe filter-button + category-button qui servira pour affichage ou non
     allButton.classList.add('active');
     allButton.classList.add('all-button'); //applique une classe supplémentaire à ce bouton
     allButton.setAttribute('data-category', 0);
@@ -68,7 +68,7 @@ function displayFilterButtons(filterButtons) {
     // Ajout des autres boutons de filtres
     filterButtons.forEach((button, index) => {
         const ButtonFilter = document.createElement('button');
-        ButtonFilter.classList.add('filter-button');
+        ButtonFilter.classList.add('filter-button', 'category-button'); //ajout de la classe filter-button + category-button qui servira pour affichage ou non
         ButtonFilter.setAttribute('data-category', button.id);
         ButtonFilter.textContent = button.name;
         buttonMenu.appendChild(ButtonFilter);
@@ -133,20 +133,26 @@ links.forEach(link => {
 
 //* Gestion de la TopBar et de la Div Modify au Login et au Logout
 window.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token'); // Récupère le token dans localStorage
     const modify = document.getElementById('modify');
     const topBar = document.getElementById('topBar'); // Sélectionne l'élément avec l'id 'topBar'
-    
+   
 
     // Fonction pour mettre à jour la visibilité de la topBar et modify en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
     function updateUI() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');// Récupère le token dans localStorage
+        const categoryButtons = document.querySelectorAll('.category-button'); // Constante pour sélectionner tous les boutons qui ont la classe category-button
+    
         if (token) {
             topBar.classList.add('show');
             modify.classList.add('shown'); // Affiche la div modify
+            // Masquer les boutons de catégories
+            categoryButtons.forEach(button => button.style.display = 'none');
         } else {
             topBar.classList.remove('show');
             modify.classList.remove('shown'); // Cache la div modify
+
+            // Afficher les boutons de catégories
+            categoryButtons.forEach(button => button.style.display = 'inline-block');
         }
     }
 
