@@ -142,6 +142,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('token');// Récupère le token dans localStorage
         const categoryButtons = document.querySelectorAll('.category-button'); // Constante pour sélectionner tous les boutons qui ont la classe category-button
         const loginLink = document.querySelector('nav ul li a[href="Login.html"]'); //Sélection du lien Login
+        const modal = document.getElementById('modal'); //Sélection de la modale
 
         if (token) {
             topBar.classList.add('show');
@@ -154,6 +155,9 @@ window.addEventListener('DOMContentLoaded', () => {
             loginLink.href = '#'; //Pour annuler la redirection
             loginLink.addEventListener('click', handleLogout); //Ajout de l'événement de déconnexion
 
+            //Afficher la modale en mode connecté
+            modal.style.display = 'block';
+
         } else {
             topBar.classList.remove('show');
             modify.classList.remove('shown'); // Cache la div modify
@@ -165,15 +169,25 @@ window.addEventListener('DOMContentLoaded', () => {
             loginLink.textContent = 'login';
             loginLink.href = 'Login.html'; //Redirige vers la page de login
             loginLink.removeEventListener('click', handleLogout); // Supprimer l'événement de déconnexion
+
+            // Cacher la modale en mode déconnecté
+            modal.style.display = 'none';
         }
     }
 
      // Fonction pour gérer la déconnexion
-     function handleLogout(e) {
+    function handleLogout(e) {
         e.preventDefault(); // Empêche la redirection
         localStorage.removeItem('token'); // Supprime le token
         window.location.reload(); // Recharge la page pour mettre à jour l'UI
     }
+
+    // Fermer la modale si l'on clique en dehors de son popup
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 
     // Appel initial pour afficher/cacher la topBar + la Div Modify au chargement de la page
     updateLogin();
