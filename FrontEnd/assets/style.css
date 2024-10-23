@@ -188,9 +188,17 @@ ul li a {
 	justify-content: center;
 }
 
-/* Div Modifier */
-.modify {
+/* Bouton Modifier */
+.modify-button {
 	display: none; 
+	width: 84px;
+	height: fit-content;
+	justify-content: space-between;
+	padding: 0%;
+	margin-left: 31px;
+	cursor: pointer;
+	background-color: transparent;
+	border: none;
 } 
 
 .shown {

@@ -131,13 +131,13 @@ links.forEach(link => {
 });
 
 
-//* Gestion de la TopBar et de la Div Modify au Login et au Logout
+//* Gestion de la TopBar et du bouton Modifier au Login et au Logout
 window.addEventListener('DOMContentLoaded', () => {
-    const modify = document.getElementById('modify');
+    const modifyButton = document.getElementById('modify-button');
     const topBar = document.getElementById('topBar'); // Sélectionne l'élément avec l'id 'topBar'
    
 
-    // Fonction pour mettre à jour la visibilité de la topBar et modify en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
+    // Fonction pour mettre à jour la visibilité de la topBar et du bouton Modifier en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
     function updateLogin() {
         const token = localStorage.getItem('token');// Récupère le token dans localStorage
         const categoryButtons = document.querySelectorAll('.category-button'); // Constante pour sélectionner tous les boutons qui ont la classe category-button
@@ -146,7 +146,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (token) {
             topBar.classList.add('show');
-            modify.classList.add('shown'); // Affiche la div modify
+            modifyButton.classList.add('shown'); // Affiche le bouton Modifier
             // Masquer les boutons de catégories
             categoryButtons.forEach(button => button.style.display = 'none');
 
@@ -156,11 +156,14 @@ window.addEventListener('DOMContentLoaded', () => {
             loginLink.addEventListener('click', handleLogout); //Ajout de l'événement de déconnexion
 
             //Afficher la modale en mode connecté
-            modal.style.display = 'block';
+            modifyButton.addEventListener('click', () => {
+                modal.style.display = 'block'; //ouvre la modale si on clique sur le bouton Modifier
+            });
+    
 
         } else {
             topBar.classList.remove('show');
-            modify.classList.remove('shown'); // Cache la div modify
+            modifyButton.classList.remove('shown'); // Cache le bouton Modifier
 
             // Afficher les boutons de catégories
             categoryButtons.forEach(button => button.style.display = 'inline-block');
@@ -189,12 +192,12 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Appel initial pour afficher/cacher la topBar + la Div Modify au chargement de la page
+    // Appel initial pour afficher/cacher la topBar + le bouton Modifier au chargement de la page
     updateLogin();
 
  
 
-    // Vérifie toutes les 500ms si le token a été supprimé & permet de MAJ à la fois la TopBar + la Div Modify
+    // Vérifie toutes les 500ms si le token a été supprimé & permet de MAJ à la fois la TopBar + le bouton Modifier
     setInterval(() => {
         updateLogin();
     }, 500);
