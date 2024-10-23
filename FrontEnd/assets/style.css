@@ -290,7 +290,7 @@ ul li a {
     padding: 20px;
     border: 1px solid #888;
     width: 80%; /* Largeur de la modale */
-	height: 50%;
+	height: fit-content;
     max-width: 630px; /* Limite de largeur */
 	max-height: 688px;
     border-radius: 8px;
@@ -308,6 +308,23 @@ ul li a {
 	width: 100%;
 
 }
+
+/* Ajout galerie du pop-up */
+
+.mini-gallery {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	grid-column-gap: 20px;
+	grid-row-gap: 20px;
+	
+}
+
+.mini-gallery img {
+	width: 100%;
+}
+
+
 #contact {
 	width: 50%;
 	margin: auto;

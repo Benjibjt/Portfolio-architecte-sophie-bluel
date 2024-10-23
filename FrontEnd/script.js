@@ -206,8 +206,43 @@ window.addEventListener('DOMContentLoaded', () => {
 
 });
 
+// Fonction pour afficher les éléments du portfolio dans la mini galerie de la modale
+function displayMinigallery(projects) {
+    const minigallery = document.getElementById('mini-gallery');
+    minigallery.innerHTML = ''; // Vider la galerie pour éviter la duplication
 
+    // Utilisation d'une boucle for pour parcourir les projets
+    for (let i = 0; i < projects.length; i++) {
+        const project = projects[i]; // Accède à chaque projet
 
+        const figure = document.createElement('figure');
+        const img = document.createElement('img');
+        const figcaption = document.createElement('figcaption');
+
+        img.src = project.imageUrl;
+        img.alt = project.title;
+        figcaption.textContent = project.title;
+
+        figure.appendChild(img);
+        figure.appendChild(figcaption);
+        minigallery.appendChild(figure);
+    }
+}
+
+// Fonction pour récupérer les projets depuis l'API
+async function fetchMinigallery() {
+    try {
+        response = await fetch('http://localhost:5678/api/works');
+        const portfolioMinigallery = await response.json();
+        displayMinigallery(portfolioMinigallery);
+     //   fetchFilterButtons(portfolioProjects); // Passe les projets pour configurer les filtres
+    } catch (error) {
+        console.error('Erreur lors de la récupération des projets :', error);
+    }
+}
+
+// Appel de la fonction pour récupérer les projets du portfolio et les afficher
+fetchMinigallery();
 
 
 
