@@ -138,32 +138,51 @@ window.addEventListener('DOMContentLoaded', () => {
    
 
     // Fonction pour mettre à jour la visibilité de la topBar et modify en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
-    function updateUI() {
+    function updateLogin() {
         const token = localStorage.getItem('token');// Récupère le token dans localStorage
         const categoryButtons = document.querySelectorAll('.category-button'); // Constante pour sélectionner tous les boutons qui ont la classe category-button
-    
+        const loginLink = document.querySelector('nav ul li a[href="Login.html"]'); //Sélection du lien Login
+
         if (token) {
             topBar.classList.add('show');
             modify.classList.add('shown'); // Affiche la div modify
             // Masquer les boutons de catégories
             categoryButtons.forEach(button => button.style.display = 'none');
+
+            //Changer le lien Login en Logout
+            loginLink.textContent = 'logout';
+            loginLink.href = '#'; //Pour annuler la redirection
+            loginLink.addEventListener('click', handleLogout); //Ajout de l'événement de déconnexion
+
         } else {
             topBar.classList.remove('show');
             modify.classList.remove('shown'); // Cache la div modify
 
             // Afficher les boutons de catégories
             categoryButtons.forEach(button => button.style.display = 'inline-block');
+
+            // Changer logout en login
+            loginLink.textContent = 'login';
+            loginLink.href = 'Login.html'; //Redirige vers la page de login
+            loginLink.removeEventListener('click', handleLogout); // Supprimer l'événement de déconnexion
         }
     }
 
+     // Fonction pour gérer la déconnexion
+     function handleLogout(e) {
+        e.preventDefault(); // Empêche la redirection
+        localStorage.removeItem('token'); // Supprime le token
+        window.location.reload(); // Recharge la page pour mettre à jour l'UI
+    }
+
     // Appel initial pour afficher/cacher la topBar + la Div Modify au chargement de la page
-    updateUI();
+    updateLogin();
 
  
 
     // Vérifie toutes les 500ms si le token a été supprimé & permet de MAJ à la fois la TopBar + la Div Modify
     setInterval(() => {
-        updateUI();
+        updateLogin();
     }, 500);
 
     
