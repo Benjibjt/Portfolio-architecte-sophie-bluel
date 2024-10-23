@@ -296,6 +296,11 @@ ul li a {
     border-radius: 8px;
 }
 
+/* masque par défaut le second article de la modale */
+.hidden {
+	display: 'none';
+}
+
 .gallery {
 	width: 100%;
 	display: grid;
@@ -322,6 +327,26 @@ ul li a {
 
 .mini-gallery img {
 	width: 100%;
+}
+
+/* Style pour chaque élément de la galerie */
+.gallery-item {
+    position: relative; /* Pour positionner l'icône de poubelle à l'intérieur */
+    display: inline-block;
+    margin: 10px;
+}
+
+/* Style pour l'icône de poubelle */
+.trash-icon {
+    position: absolute;
+    top: 10px; /* Positionner en haut à droite */
+    right: 10px;
+    font-size: 18px; /* Taille de l'icône */
+    cursor: pointer; /* Pour indiquer qu'il est cliquable */
+    background-color: rgba(0, 0, 0, 0.5); /* Optionnel : fond semi-transparent */
+    padding: 5px;
+    border-radius: 50%;
+    color: #fcfcfd; /* Couleur blanche pour l'icône */
 }
 
 

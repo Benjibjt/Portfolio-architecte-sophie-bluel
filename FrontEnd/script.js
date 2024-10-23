@@ -206,7 +206,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// Fonction pour afficher les éléments du portfolio dans la mini galerie de la modale
+// Fonction pour afficher les éléments du portfolio dans la mini galerie de la modale (reprise sur la fonction displayPortfolio )
 function displayMinigallery(projects) {
     const minigallery = document.getElementById('mini-gallery');
     minigallery.innerHTML = ''; // Vider la galerie pour éviter la duplication
@@ -216,15 +216,20 @@ function displayMinigallery(projects) {
         const project = projects[i]; // Accède à chaque projet
 
         const figure = document.createElement('figure');
+        figure.classList.add('gallery-item'); //Ajout de classe pour le style
+
         const img = document.createElement('img');
-        const figcaption = document.createElement('figcaption');
+        const trashIcon = document.createElement('i') // créer l'élément pour l'icône de poubelle
 
         img.src = project.imageUrl;
         img.alt = project.title;
-        figcaption.textContent = project.title;
+
+        // Configuration de l'icône de poubelle
+        trashIcon.classList.add('fa-solid', 'fa-trash-can', 'trash-icon'); // Ajoute les classes Font Awesome + la classe custom
+        trashIcon.style.color = '#fcfcfd';
 
         figure.appendChild(img);
-        figure.appendChild(figcaption);
+        figure.appendChild(trashIcon);
         minigallery.appendChild(figure);
     }
 }
@@ -244,5 +249,18 @@ async function fetchMinigallery() {
 // Appel de la fonction pour récupérer les projets du portfolio et les afficher
 fetchMinigallery();
 
+
+// Sélectionner le bouton et les articles
+const openPopupAddPhoto = document.getElementById('openpopup-addphoto');
+const galleryPopup = document.getElementById('gallery-popup');
+const addPhotoPopup = document.getElementById('addphoto-popup');
+
+// Ajouter un écouteur d'événement pour le bouton
+openPopupAddPhoto.addEventListener('click', () => {
+    // Masquer le gallery-popup et afficher addphoto-popup
+    galleryPopup.style.display = 'none';
+    addPhotoPopup.classList.remove('hidden');
+    addPhotoPopup.classList.add('modal-popup');
+});
 
 
