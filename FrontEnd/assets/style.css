@@ -271,7 +271,7 @@ ul li a {
 }
 
 /* Style pour la fenêtre modale */
-.modal {
+.overlay {
 	display: none; /* Masquée par défaut */
     position: fixed; /* Reste visible même en scrollant */
     z-index: 1000; /* S'affiche au-dessus de tout */
@@ -284,7 +284,7 @@ ul li a {
 }
 
 /* Style pour le popup de la modale */
-.modal-popup {
+.modal {
     background-color: white;
     margin: 15% auto; /* Centrer la modale */
     padding: 20px;

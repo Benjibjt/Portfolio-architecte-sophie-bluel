@@ -135,48 +135,47 @@ links.forEach(link => {
 window.addEventListener('DOMContentLoaded', () => {
     const modifyButton = document.getElementById('modify-button');
     const topBar = document.getElementById('topBar'); // Sélectionne l'élément avec l'id 'topBar'
+    console.log(document.getElementById('addphoto-modal').classList);
    
 
-    // Fonction pour mettre à jour la visibilité de la topBar et du bouton Modifier en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
+    // Fonction pour afficher ou masquer les boutons de catégorie sur la page
+    function alternateCategoryButtons(show) {
+        const categoryButtons = document.querySelectorAll('.category-button');
+        categoryButtons.forEach(button => {
+        button.style.display = show ? 'inline-block' : 'none'; // condition ternaire > condition ? true : false;
+        });
+    }
+    
+    // Fonction pour mettre à jour la page d'accueil en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
     function updateLogin() {
-        const token = localStorage.getItem('token');// Récupère le token dans localStorage
-        const categoryButtons = document.querySelectorAll('.category-button'); // Constante pour sélectionner tous les boutons qui ont la classe category-button
-        const loginLink = document.querySelector('nav ul li a[href="Login.html"]'); //Sélection du lien Login
-        const modal = document.getElementById('modal'); //Sélection de la modale
-
+        const token = localStorage.getItem('token');
+        const loginLink = document.querySelector('nav ul li a[href="Login.html"]');
+        const overlay = document.getElementById('overlay');
+    
         if (token) {
             topBar.classList.add('show');
-            modifyButton.classList.add('shown'); // Affiche le bouton Modifier
-            // Masquer les boutons de catégories
-            categoryButtons.forEach(button => button.style.display = 'none');
-
-            //Changer le lien Login en Logout
+            modifyButton.classList.add('shown');
+            alternateCategoryButtons(false); // Appel à la fonction alternateCategoryButtons
             loginLink.textContent = 'logout';
-            loginLink.href = '#'; //Pour annuler la redirection
-            loginLink.addEventListener('click', handleLogout); //Ajout de l'événement de déconnexion
-
-            //Afficher la modale en mode connecté
+            loginLink.href = '#';
+            loginLink.addEventListener('click', handleLogout);
             modifyButton.addEventListener('click', () => {
-                modal.style.display = 'block'; //ouvre la modale si on clique sur le bouton Modifier
+                overlay.style.display = 'block';
             });
-    
-
         } else {
             topBar.classList.remove('show');
-            modifyButton.classList.remove('shown'); // Cache le bouton Modifier
-
-            // Afficher les boutons de catégories
-            categoryButtons.forEach(button => button.style.display = 'inline-block');
-
-            // Changer logout en login
+            modifyButton.classList.remove('shown');
+            alternateCategoryButtons(true); // Appel à la fonction alternateCategoryButtons
             loginLink.textContent = 'login';
-            loginLink.href = 'Login.html'; //Redirige vers la page de login
-            loginLink.removeEventListener('click', handleLogout); // Supprimer l'événement de déconnexion
-
-            // Cacher la modale en mode déconnecté
-            modal.style.display = 'none';
+            loginLink.href = 'Login.html';
+            loginLink.removeEventListener('click', handleLogout);
+            overlay.style.display = 'none';
         }
     }
+    
+
+
+
 
      // Fonction pour gérer la déconnexion
     function handleLogout(e) {
@@ -185,10 +184,10 @@ window.addEventListener('DOMContentLoaded', () => {
         window.location.reload(); // Recharge la page pour mettre à jour l'UI
     }
 
-    // Fermer la modale si l'on clique en dehors de son popup
+    // Fermer l'overlay si l'on clique en dehors de son popup
     window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
+        if (event.target === overlay) {
+            overlay.style.display = 'none';
         }
     });
 
@@ -237,10 +236,10 @@ function displayMinigallery(projects) {
 // Fonction pour récupérer les projets depuis l'API
 async function fetchMinigallery() {
     try {
-        response = await fetch('http://localhost:5678/api/works');
+        const response = await fetch('http://localhost:5678/api/works');
         const portfolioMinigallery = await response.json();
         displayMinigallery(portfolioMinigallery);
-     //   fetchFilterButtons(portfolioProjects); // Passe les projets pour configurer les filtres
+
     } catch (error) {
         console.error('Erreur lors de la récupération des projets :', error);
     }
@@ -251,16 +250,30 @@ fetchMinigallery();
 
 
 // Sélectionner le bouton et les articles
-const openPopupAddPhoto = document.getElementById('openpopup-addphoto');
-const galleryPopup = document.getElementById('gallery-popup');
-const addPhotoPopup = document.getElementById('addphoto-popup');
+const buttonAddPhoto = document.getElementById('button-addphoto');
+const galleryModal = document.getElementById('gallery-modal');
+const addPhotoModal = document.getElementById('addphoto-modal');
 
-// Ajouter un écouteur d'événement pour le bouton
-openPopupAddPhoto.addEventListener('click', () => {
-    // Masquer le gallery-popup et afficher addphoto-popup
-    galleryPopup.style.display = 'none';
-    addPhotoPopup.classList.remove('hidden');
-    addPhotoPopup.classList.add('modal-popup');
-});
+// Fonction pour ouvrir la modale d'ajout de photo
+function openAddPhotoModal() {
+    // Masquer la galerie et afficher la modale d'ajout de photo
+    galleryModal.style.display = 'none';
+    addPhotoModal.classList.remove('hidden');
+    addPhotoModal.classList.add('modal');
 
+    addPhotoModal.innerHTML = `
+    <h2>Ajout photo</>
+    <form id="add-photo-form">
+        <input type="file" id="photo-file" name="photo-file accept="image/*" required><br>
+        <label for="photo-title">Titre:</label><br>
+        <input type="text" id="photo-title" name="photo-title" required><br>
+        <label for="category">Catégorie:</label><br>
+        <input type="text" id="category" name="category" required><br>
+        <button type="submit">Valider</button>
+    </form>
+    `;
+
+}
+
+buttonAddPhoto.addEventListener('click', openAddPhotoModal);
 
