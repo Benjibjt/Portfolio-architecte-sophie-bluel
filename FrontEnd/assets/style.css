@@ -301,6 +301,13 @@ ul li a {
 	display: 'none';
 }
 
+
+/* style pour la croix de modale */
+.close-button {
+	font-size: 24px;
+	cursor: pointer;
+}
+
 .gallery {
 	width: 100%;
 	display: grid;

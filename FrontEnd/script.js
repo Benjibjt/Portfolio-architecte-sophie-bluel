@@ -181,12 +181,25 @@ window.addEventListener('DOMContentLoaded', () => {
     
 
 
-    // Fermer l'overlay si l'on clique en dehors de son popup
-    window.addEventListener('click', (event) => {
-        if (event.target === overlay) {
-            overlay.style.display = 'none';
-        }
-    });
+    // Ferme l'overlay et la modale si clic extérieur modale ou sur la croix
+    // Modification de la fonction pour fermer l'overlay et les modales
+window.addEventListener('click', (event) => {
+    const overlay = document.getElementById('overlay');
+    const closeButtonGallery = document.querySelector('#gallery-modal .close-button');
+    const closeButtonAddPhoto = document.querySelector('#addphoto-modal .close-button');
+    const addPhotoModal = document.getElementById('addphoto-modal');
+    const galleryModal = document.getElementById('gallery-modal');
+
+    if (
+        event.target === overlay ||
+        (closeButtonGallery && (event.target === closeButtonGallery || closeButtonGallery.contains(event.target))) ||
+        (closeButtonAddPhoto && (event.target === closeButtonAddPhoto || closeButtonAddPhoto.contains(event.target)))
+    ) {
+        overlay.style.display = 'none';
+        galleryModal.style.display = 'none';
+        addPhotoModal.style.display = 'none';
+    }
+});
 
 
     // Fonction pour récupérer les projets depuis l'API
@@ -289,17 +302,49 @@ function openAddPhotoModal() {
     addPhotoModal.classList.add('modal');
 
     addPhotoModal.innerHTML = `
-    <h2>Ajout photo</>
+    <div>
+        <span class="close-button"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <h2>Ajout photo</h2>
     <form id="add-photo-form">
         <input type="file" id="photo-file" name="photo-file accept="image/*" required><br>
         <label for="photo-title">Titre:</label><br>
         <input type="text" id="photo-title" name="photo-title" required><br>
         <label for="category">Catégorie:</label><br>
-        <input type="text" id="category" name="category" required><br>
+        <select id="category-selector" name="category" required>
+            <option value=""></option>
+        </select><br>
         <button type="submit">Valider</button>
     </form>
     `;
 
+    // Remplir le bouton de catégories avec les catégories disponibles
+    fetchCategorieSelect().then(categories => CategorySelector(categories));
+
+
+}
+
+// Fonction pour récupérer les catégories depuis l'API
+async function fetchCategorieSelect() {
+    try {
+        const response = await fetch('http://localhost:5678/api/categories');
+        const categories = await response.json();
+        return categories;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des catégories :', error);
+        return [];
+    }
+}
+
+// Fonction pour remplir le sélecteur de catégories
+function CategorySelector(categories) {
+    const categorySelect = document.getElementById('category-selector');
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+    });
 }
 
 buttonAddPhoto.addEventListener('click', openAddPhotoModal);
