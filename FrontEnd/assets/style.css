@@ -273,7 +273,7 @@ ul li a {
 /* Style pour la fenêtre modale */
 .overlay {
 	display: none; /* Masquée par défaut */
-    position: fixed; /* Reste visible même en scrollant */
+	position: fixed; /* Reste visible même en scrollant */
     z-index: 1000; /* S'affiche au-dessus de tout */
     left: 0;
     top: 0;

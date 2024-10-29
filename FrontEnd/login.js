@@ -55,19 +55,5 @@ async function submitLogin(email, password) {
     }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token'); // Récupère le token dans localStorage
-    const topBar = document.getElementById('topBar'); // Sélectionne l'élément avec l'id 'topBar'
 
-    // Vérifie si l'élément topBar existe
-    if (topBar) {
-        if (token) {
-            topBar.classList.add('show'); // Affiche la topBar si l'utilisateur est connecté
-        } else {
-            topBar.classList.remove('show'); // Cache la topBar si l'utilisateur n'est pas connecté
-        }
-    } else {
-        console.error("L'élément avec l'ID 'topBar' n'a pas été trouvé dans le DOM.");
-    }
-});
 

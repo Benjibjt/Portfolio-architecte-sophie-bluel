@@ -21,17 +21,7 @@ function displayPortfolio(projects) {
     }
 }
 
-// Fonction pour récupérer les projets depuis l'API
-async function fetchProjects() {
-    try {
-        const response = await fetch('http://localhost:5678/api/works');
-        const portfolioProjects = await response.json();
-        displayPortfolio(portfolioProjects);
-        fetchFilterButtons(portfolioProjects); // Passe les projets pour configurer les filtres
-    } catch (error) {
-        console.error('Erreur lors de la récupération des projets :', error);
-    }
-}
+
 
 // Fonction pour filtrer les projets par catégorie
 function filterProjectsByCategory(projects, categoryId) {
@@ -112,11 +102,9 @@ function setupFilters(projects) {
             filterProjectsByCategory(projects, categoryId);
         });
     });
-}
+}   
 
 
-// Appel de la fonction pour récupérer les projets du portfolio et les afficher
-fetchProjects();
 
 
 // Récupère tous les liens du menu
@@ -131,58 +119,67 @@ links.forEach(link => {
 });
 
 
-//* Gestion de la TopBar et du bouton Modifier au Login et au Logout
+//* Chargement des éléments du DOM + prise en compte des éléments liés à la connexion / déconnexion + récupération des projets depuis l'API
 window.addEventListener('DOMContentLoaded', () => {
+    // Sélection des éléments nécessaires après le chargement de la page
     const modifyButton = document.getElementById('modify-button');
-    const topBar = document.getElementById('topBar'); // Sélectionne l'élément avec l'id 'topBar'
-    console.log(document.getElementById('addphoto-modal').classList);
-   
+    const topBar = document.getElementById('topBar'); 
+    const overlay = document.getElementById('overlay');
+    const loginLink = document.querySelector('nav ul li a[href="Login.html"]');
+
+    // Fonction pour mettre à jour la page d'accueil en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
+    function updateLogin() {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            topBar.classList.add('show');
+            modifyButton.classList.add('shown');
+            alternateCategoryButtons(false); // Cache les boutons de catégorie
+
+            // MAJ lien de connexion / déconnexion
+            loginLink.textContent = 'logout';
+            loginLink.href = '#';
+            loginLink.addEventListener('click', handleLogout); // Ajoute l'écouteur de Logout
+
+            // Affichage de l'overlay si le bouton modifier est cliqué
+            modifyButton.addEventListener('click', () => {
+            overlay.style.display = 'block';
+            });
+
+        } else {
+            topBar.classList.remove('show');
+            modifyButton.classList.remove('shown');
+            alternateCategoryButtons(true); // Appel à la fonction alternateCategoryButtons
+
+            // MAJ lien de connexion / déconnexion
+            loginLink.textContent = 'login';
+            loginLink.href = 'Login.html';
+            loginLink.removeEventListener('click', handleLogout); // retire l'écouteur de logout
+
+            // Retrait de l'overlay
+            overlay.style.display = 'none';
+        }
+    }
+
 
     // Fonction pour afficher ou masquer les boutons de catégorie sur la page
     function alternateCategoryButtons(show) {
         const categoryButtons = document.querySelectorAll('.category-button');
+        console.log(`Affichage des boutons de catégorie : ${show}`);
         categoryButtons.forEach(button => {
         button.style.display = show ? 'inline-block' : 'none'; // condition ternaire > condition ? true : false;
         });
     }
     
-    // Fonction pour mettre à jour la page d'accueil en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
-    function updateLogin() {
-        const token = localStorage.getItem('token');
-        const loginLink = document.querySelector('nav ul li a[href="Login.html"]');
-        const overlay = document.getElementById('overlay');
-    
-        if (token) {
-            topBar.classList.add('show');
-            modifyButton.classList.add('shown');
-            alternateCategoryButtons(false); // Appel à la fonction alternateCategoryButtons
-            loginLink.textContent = 'logout';
-            loginLink.href = '#';
-            loginLink.addEventListener('click', handleLogout);
-            modifyButton.addEventListener('click', () => {
-                overlay.style.display = 'block';
-            });
-        } else {
-            topBar.classList.remove('show');
-            modifyButton.classList.remove('shown');
-            alternateCategoryButtons(true); // Appel à la fonction alternateCategoryButtons
-            loginLink.textContent = 'login';
-            loginLink.href = 'Login.html';
-            loginLink.removeEventListener('click', handleLogout);
-            overlay.style.display = 'none';
-        }
-    }
-    
-
-
-
-
-     // Fonction pour gérer la déconnexion
-    function handleLogout(e) {
-        e.preventDefault(); // Empêche la redirection
+    // Fonction pour gérer la déconnexion
+    async function handleLogout(event) {
+        event.preventDefault(); // Empêche la redirection
         localStorage.removeItem('token'); // Supprime le token
-        window.location.reload(); // Recharge la page pour mettre à jour l'UI
+        updateLogin();
     }
+
+    
+
 
     // Fermer l'overlay si l'on clique en dehors de son popup
     window.addEventListener('click', (event) => {
@@ -191,19 +188,49 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Appel initial pour afficher/cacher la topBar + le bouton Modifier au chargement de la page
-    updateLogin();
 
- 
+    // Fonction pour récupérer les projets depuis l'API
+    async function fetchProjects() {
+        try {
+            const response = await fetch('http://localhost:5678/api/works');
+            const portfolioProjects = await response.json();
+            displayPortfolio(portfolioProjects);
+            await fetchFilterButtons(portfolioProjects); // Assurer que les boutons sont chargés avant d'appeler updateLogin
+            updateLogin(); // mise à jour de l'affichage après le chargement des filtres
+        } catch (error) {
+            console.error('Erreur lors de la récupération des projets :', error);
+        }
+    }
 
-    // Vérifie toutes les 500ms si le token a été supprimé & permet de MAJ à la fois la TopBar + le bouton Modifier
-    setInterval(() => {
-        updateLogin();
-    }, 500);
-
-    
+    // Appel de la fonction pour récupérer les projets du portfolio et les afficher
+    fetchProjects();
 
 });
+
+
+
+// Fonction pour afficher les éléments du portfolio dans la galerie
+function displayPortfolio(projects) {
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = ''; // Vider la galerie pour éviter la duplication
+
+    // Utilisation d'une boucle for pour parcourir les projets
+    for (let i = 0; i < projects.length; i++) {
+        const project = projects[i]; // Accède à chaque projet
+
+        const figure = document.createElement('figure');
+        const img = document.createElement('img');
+        const figcaption = document.createElement('figcaption');
+
+        img.src = project.imageUrl;
+        img.alt = project.title;
+        figcaption.textContent = project.title;
+
+        figure.appendChild(img);
+        figure.appendChild(figcaption);
+        gallery.appendChild(figure);
+    }
+}
 
 // Fonction pour afficher les éléments du portfolio dans la mini galerie de la modale (reprise sur la fonction displayPortfolio )
 function displayMinigallery(projects) {
