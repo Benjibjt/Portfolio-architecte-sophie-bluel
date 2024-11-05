@@ -296,10 +296,10 @@ ul li a {
     border-radius: 8px;
 }
 
-/* masque par défaut le second article de la modale */
+/* masque par défaut le second article de la modale 
 .hidden {
 	display: 'none';
-}
+} */
 
 
 /* style pour la croix de modale */
@@ -315,6 +315,12 @@ ul li a {
 	grid-column-gap: 20px;
 	grid-row-gap: 20px;
 }
+
+/*#gallery-modal, #addphoto-modal {
+	display: block;
+} */
+
+
 
 .gallery img {
 	width: 100%;

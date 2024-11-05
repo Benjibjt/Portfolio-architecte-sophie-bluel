@@ -126,81 +126,83 @@ window.addEventListener('DOMContentLoaded', () => {
     const topBar = document.getElementById('topBar'); 
     const overlay = document.getElementById('overlay');
     const loginLink = document.querySelector('nav ul li a[href="Login.html"]');
+    const galleryModal = document.getElementById('gallery-modal');
+    const addPhotoModal = document.getElementById('addphoto-modal');
 
-    // Fonction pour mettre à jour la page d'accueil en fonction du token (plutôt que de faire 1 fonction pour chaque élément)
+    // Fonction pour mettre à jour la page d'accueil en fonction du token
     function updateLogin() {
         const token = localStorage.getItem('token');
-
+    
         if (token) {
             topBar.classList.add('show');
             modifyButton.classList.add('shown');
             alternateCategoryButtons(false); // Cache les boutons de catégorie
-
+    
             // MAJ lien de connexion / déconnexion
             loginLink.textContent = 'logout';
             loginLink.href = '#';
             loginLink.addEventListener('click', handleLogout); // Ajoute l'écouteur de Logout
-
-            // Affichage de l'overlay si le bouton modifier est cliqué
+    
+            // Écouteur pour afficher l'overlay et la modal galleryModal lors d'un clic sur modifyButton
             modifyButton.addEventListener('click', () => {
-            overlay.style.display = 'block';
+                overlay.style.display = 'block';
+                galleryModal.style.display = 'block'; // Assure que galleryModal est visible
+                addPhotoModal.style.display = 'none'; // Masque addPhotoModal si elle est ouverte
             });
-
+    
         } else {
             topBar.classList.remove('show');
             modifyButton.classList.remove('shown');
-            alternateCategoryButtons(true); // Appel à la fonction alternateCategoryButtons
-
+            alternateCategoryButtons(true);
+    
             // MAJ lien de connexion / déconnexion
             loginLink.textContent = 'login';
             loginLink.href = 'Login.html';
-            loginLink.removeEventListener('click', handleLogout); // retire l'écouteur de logout
-
+            loginLink.removeEventListener('click', handleLogout);
+    
             // Retrait de l'overlay
             overlay.style.display = 'none';
         }
     }
-
 
     // Fonction pour afficher ou masquer les boutons de catégorie sur la page
     function alternateCategoryButtons(show) {
         const categoryButtons = document.querySelectorAll('.category-button');
         console.log(`Affichage des boutons de catégorie : ${show}`);
         categoryButtons.forEach(button => {
-        button.style.display = show ? 'inline-block' : 'none'; // condition ternaire > condition ? true : false;
+            button.style.display = show ? 'inline-block' : 'none';
         });
     }
     
     // Fonction pour gérer la déconnexion
     async function handleLogout(event) {
-        event.preventDefault(); // Empêche la redirection
-        localStorage.removeItem('token'); // Supprime le token
+        event.preventDefault();
+        localStorage.removeItem('token');
         updateLogin();
     }
 
-    
-
-
     // Ferme l'overlay et la modale si clic extérieur modale ou sur la croix
-    // Modification de la fonction pour fermer l'overlay et les modales
-window.addEventListener('click', (event) => {
-    const overlay = document.getElementById('overlay');
-    const closeButtonGallery = document.querySelector('#gallery-modal .close-button');
-    const closeButtonAddPhoto = document.querySelector('#addphoto-modal .close-button');
-    const addPhotoModal = document.getElementById('addphoto-modal');
-    const galleryModal = document.getElementById('gallery-modal');
+    window.addEventListener('click', (event) => {
+        const closeButtonGallery = document.querySelector('#gallery-modal .close-button');
+        const closeButtonAddPhoto = document.querySelector('#addphoto-modal .close-button');
 
-    if (
-        event.target === overlay ||
-        (closeButtonGallery && (event.target === closeButtonGallery || closeButtonGallery.contains(event.target))) ||
-        (closeButtonAddPhoto && (event.target === closeButtonAddPhoto || closeButtonAddPhoto.contains(event.target)))
-    ) {
-        overlay.style.display = 'none';
-        galleryModal.style.display = 'none';
-        addPhotoModal.style.display = 'none';
-    }
-});
-
+        // Condition pour fermer toutes les modales si l'on clique sur l'overlay ou le bouton de fermeture
+        if (event.target === overlay || event.target.closest('.close-button')) {
+            overlay.style.display = 'none';
+            galleryModal.style.display = 'none';
+            addPhotoModal.style.display = 'none';
+        } else if (event.target.closest('#button-addphoto')) {
+            // Si on clique sur le bouton d'ajout de photo, afficher addPhotoModal et masquer galleryModal
+            overlay.style.display = 'block';
+            addPhotoModal.style.display = 'block';
+            galleryModal.style.display = 'none';
+        } else if (event.target.closest('#gallery-button')) {
+            // Si on clique sur le bouton de la galerie, afficher galleryModal et masquer addPhotoModal
+            overlay.style.display = 'block';
+            galleryModal.style.display = 'block';
+            addPhotoModal.style.display = 'none';
+        }
+    });
 
     // Fonction pour récupérer les projets depuis l'API
     async function fetchProjects() {
@@ -217,33 +219,11 @@ window.addEventListener('click', (event) => {
 
     // Appel de la fonction pour récupérer les projets du portfolio et les afficher
     fetchProjects();
-
 });
 
 
 
-// Fonction pour afficher les éléments du portfolio dans la galerie
-function displayPortfolio(projects) {
-    const gallery = document.getElementById('gallery');
-    gallery.innerHTML = ''; // Vider la galerie pour éviter la duplication
 
-    // Utilisation d'une boucle for pour parcourir les projets
-    for (let i = 0; i < projects.length; i++) {
-        const project = projects[i]; // Accède à chaque projet
-
-        const figure = document.createElement('figure');
-        const img = document.createElement('img');
-        const figcaption = document.createElement('figcaption');
-
-        img.src = project.imageUrl;
-        img.alt = project.title;
-        figcaption.textContent = project.title;
-
-        figure.appendChild(img);
-        figure.appendChild(figcaption);
-        gallery.appendChild(figure);
-    }
-}
 
 // Fonction pour afficher les éléments du portfolio dans la mini galerie de la modale (reprise sur la fonction displayPortfolio )
 function displayMinigallery(projects) {
@@ -299,7 +279,6 @@ function openAddPhotoModal() {
     // Masquer la galerie et afficher la modale d'ajout de photo
     galleryModal.style.display = 'none';
     addPhotoModal.classList.remove('hidden');
-    addPhotoModal.classList.add('modal');
 
     addPhotoModal.innerHTML = `
     <div>
@@ -307,7 +286,7 @@ function openAddPhotoModal() {
     </div>
     <h2>Ajout photo</h2>
     <form id="add-photo-form">
-        <input type="file" id="photo-file" name="photo-file accept="image/*" required><br>
+        <input type="file" id="photo-file" name="photo-file" accept="image/*" required><br>
         <label for="photo-title">Titre:</label><br>
         <input type="text" id="photo-title" name="photo-title" required><br>
         <label for="category">Catégorie:</label><br>
@@ -323,6 +302,8 @@ function openAddPhotoModal() {
 
 
 }
+
+buttonAddPhoto.addEventListener('click', openAddPhotoModal);
 
 // Fonction pour récupérer les catégories depuis l'API
 async function fetchCategorieSelect() {
@@ -347,5 +328,5 @@ function CategorySelector(categories) {
     });
 }
 
-buttonAddPhoto.addEventListener('click', openAddPhotoModal);
+
 
