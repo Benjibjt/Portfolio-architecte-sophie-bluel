@@ -263,6 +263,19 @@ ul li a {
 	color: white;
 }
 
+
+.gallery {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-column-gap: 20px;
+	grid-row-gap: 20px;
+}
+
+.gallery img {
+	width: 100%;
+}
+
 /* Message d'erreur */
 #error-message {
 	margin-top: 25px;
@@ -285,15 +298,74 @@ ul li a {
 
 /* Style pour le popup de la modale */
 .modal {
-    background-color: white;
+	background-color: white;
     margin: 15% auto; /* Centrer la modale */
-    padding: 20px;
+    padding: 0px;
     border: 1px solid #888;
     width: 80%; /* Largeur de la modale */
 	height: fit-content;
     max-width: 630px; /* Limite de largeur */
 	max-height: 688px;
-    border-radius: 8px;
+    border-radius: 10px;
+}
+
+.close-div {
+	width: 570px;
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+#addphoto-modal .close-div {
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.arrow {
+	display: flex;
+	align-items: center;
+}
+
+.custom-arrow {
+	font-size: 21px;
+	width: 21px;
+	height: 18px;
+}
+
+#gallery-modal {
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
+	padding: 30px;
+}
+
+#gallery-modal h2 {
+	color: black;
+	margin-top: 5px;
+	margin-bottom: 46px;
+	font-weight: 400;
+	font-family: sans-serif;
+}
+
+#addphoto-modal h2 {
+	color: black;
+	margin-top: 5px;
+	margin-bottom: 46px;
+	font-weight: 400;
+	font-family: sans-serif;
+}
+
+#addphoto-modal {
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
+	padding: 30px;
+
+}
+
+#add-photo-form {
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
 }
 
 /* masque par défaut le second article de la modale 
@@ -301,6 +373,40 @@ ul li a {
 	display: 'none';
 } */
 
+.horizontal-line {
+	height: 1px;
+	background-color: #B3B3B3;
+	width: 420px;
+	justify-self: center;
+	margin-top: 67px;
+	margin-bottom: 38px;
+}
+
+#addphoto-modal .horizontal-line {
+	margin-top: 46px;
+
+}
+
+#button-addphoto {
+	background-color: #1D6154;
+	border-radius: 60px; 
+	width: 237px;
+	height: 36px;
+	color: white;
+	padding: 0%;
+	border-color: #1D6154;
+}
+
+#validate-button {
+	align-self: center;
+	border-radius: 60px; 
+	width: 237px;
+	height: 36px;
+	color: white;
+	padding: 0%;
+	background-color: #A7A7A7;
+	margin-bottom: 53px;
+}
 
 /* style pour la croix de modale */
 .close-button {
@@ -308,57 +414,84 @@ ul li a {
 	cursor: pointer;
 }
 
-.gallery {
-	width: 100%;
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-column-gap: 20px;
-	grid-row-gap: 20px;
+.addphoto-rectangle {
+	width: 420px;
+	height: 169px;
+	background-color: #E8F1F6;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around; 
+	align-items: center; 
+	margin-bottom: 31px;
 }
 
-/*#gallery-modal, #addphoto-modal {
-	display: block;
-} */
-
-
-
-.gallery img {
-	width: 100%;
+.custom-icon {
+	font-size: 76px;
+	width: 76px;
+	height: 76px;
 
 }
+
+.rectangle-button {
+	width: 173px;
+	height: 36px;
+	background-color: #CBD6DC;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50px;
+	color: #306685;
+}
+
+
+
+
+#photo-title {
+	height: 51px;
+}
+
+#category-selector {
+	height: 51px;
+}
+
+
 
 /* Ajout galerie du pop-up */
 
 .mini-gallery {
-	width: 100%;
+	width: 420px;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-	grid-column-gap: 20px;
-	grid-row-gap: 20px;
+	grid-column-gap: 9px;
+	grid-row-gap: 29px;
 	
 }
 
 .mini-gallery img {
 	width: 100%;
+	padding: 0%;
+	margin: 0%;
 }
+
 
 /* Style pour chaque élément de la galerie */
 .gallery-item {
     position: relative; /* Pour positionner l'icône de poubelle à l'intérieur */
     display: inline-block;
-    margin: 10px;
+    margin: 0%;
 }
 
 /* Style pour l'icône de poubelle */
 .trash-icon {
     position: absolute;
-    top: 10px; /* Positionner en haut à droite */
-    right: 10px;
-    font-size: 18px; /* Taille de l'icône */
-    cursor: pointer; /* Pour indiquer qu'il est cliquable */
-    background-color: rgba(0, 0, 0, 0.5); /* Optionnel : fond semi-transparent */
+    top: 6px; /* Positionner en haut à droite */
+    right: 6px;
+    font-size: 9px; /* Taille de l'icône */
+    cursor: pointer; 
+    background-color: rgba(0, 0, 0, 0.8); /* fond semi-transparent */
     padding: 5px;
-    border-radius: 50%;
+    border-radius: 2px; 
     color: #fcfcfd; /* Couleur blanche pour l'icône */
 }
 

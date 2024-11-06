@@ -281,19 +281,28 @@ function openAddPhotoModal() {
     addPhotoModal.classList.remove('hidden');
 
     addPhotoModal.innerHTML = `
-    <div>
+    <div class="close-div">
+        <span class="arrow"><i class="fa-solid fa-arrow-left custom-arrow"></i></span>
         <span class="close-button"><i class="fa-solid fa-xmark"></i></span>
     </div>
     <h2>Ajout photo</h2>
     <form id="add-photo-form">
-        <input type="file" id="photo-file" name="photo-file" accept="image/*" required><br>
-        <label for="photo-title">Titre:</label><br>
+        <div class="addphoto-rectangle">
+            <i class="fa-regular fa-image custom-icon" style="color: #b9c5cc;"></i>
+            <div class="rectangle-button">
+                <input type="file" id="photo-file" name="photo-file" accept="image/*" required style="display: none;"><br>
+                <label for="photo-file" class="custom-file-label">+ Ajouter photo</label>
+            </div>
+            <p>jpg, png : 4mo max</p>
+        </div>
+        <label for="photo-title">Titre</label><br>
         <input type="text" id="photo-title" name="photo-title" required><br>
-        <label for="category">Catégorie:</label><br>
+        <label for="category">Catégorie</label><br>
         <select id="category-selector" name="category" required>
             <option value=""></option>
         </select><br>
-        <button type="submit">Valider</button>
+        <div class="horizontal-line"></div>
+        <button id="validate-button" type="submit">Valider</button>
     </form>
     `;
 
