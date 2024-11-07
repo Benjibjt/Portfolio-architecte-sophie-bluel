@@ -368,11 +368,6 @@ ul li a {
 	justify-items: center;
 }
 
-/* masque par défaut le second article de la modale 
-.hidden {
-	display: 'none';
-} */
-
 .horizontal-line {
 	height: 1px;
 	background-color: #B3B3B3;

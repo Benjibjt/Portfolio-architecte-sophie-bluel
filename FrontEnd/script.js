@@ -309,7 +309,12 @@ function openAddPhotoModal() {
     // Remplir le bouton de catégories avec les catégories disponibles
     fetchCategorieSelect().then(categories => CategorySelector(categories));
 
-
+    // Flèche de retour en arrière
+    const arrowIcon = addPhotoModal.querySelector('.arrow');
+    arrowIcon.addEventListener('click', () => {
+        addPhotoModal.style.display = 'none'; // masque la partie ajout de photos de la modale
+        galleryModal.style.display = 'block'; // affiche la partie galerie de la modale
+    });
 }
 
 buttonAddPhoto.addEventListener('click', openAddPhotoModal);
