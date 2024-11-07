@@ -254,6 +254,170 @@ function displayMinigallery(projects) {
     addTrashIconListeners();
 }
 
+// Fonction pour récupérer les projets depuis l'API
+async function fetchMinigallery() {
+    try {
+        const response = await fetch('http://localhost:5678/api/works');
+        const portfolioMinigallery = await response.json();
+        displayMinigallery(portfolioMinigallery);
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des projets :', error);
+    }
+}
+
+// Appel de la fonction pour récupérer les projets du portfolio et les afficher
+fetchMinigallery();
+
+// Sélectionner le bouton et les articles
+const buttonAddPhoto = document.getElementById('button-addphoto');
+const galleryModal = document.getElementById('gallery-modal');
+const addPhotoModal = document.getElementById('addphoto-modal');
+
+
+
+
+// Fonction pour ouvrir la modale d'ajout de photo
+function openAddPhotoModal() {
+    // Masquer la galerie et afficher la modale d'ajout de photo
+    galleryModal.style.display = 'none';
+    addPhotoModal.classList.remove('hidden');
+
+    addPhotoModal.innerHTML = `
+    <div class="close-div">
+        <span class="arrow"><i class="fa-solid fa-arrow-left custom-arrow"></i></span>
+        <span class="close-button"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <h2>Ajout photo</h2>
+    <form id="add-photo-form">
+        <div class="addphoto-rectangle">
+            <i class="fa-regular fa-image custom-icon" style="color: #b9c5cc;"></i>
+            <div class="rectangle-button">
+                <input type="file" id="photo-file" name="photo-file" accept="image/*" required style="display: none;"><br>
+                <label for="photo-file" class="custom-file-label">+ Ajouter photo</label>
+            </div>
+            <p>jpg, png : 4mo max</p>
+        </div>
+        <label for="photo-title">Titre</label><br>
+        <input type="text" id="photo-title" name="photo-title" required><br>
+        <label for="category">Catégorie</label><br>
+        <select id="category-selector" name="category" required>
+            <option value=""></option>
+        </select><br>
+        <div class="horizontal-line"></div>
+        <button id="validate-button" type="submit">Valider</button>
+    </form>
+    `;
+
+    // Sélectionnez le formulaire et ajoutez un écouteur de soumission
+    const addPhotoForm = document.getElementById('add-photo-form');
+    addPhotoForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Empêche le rechargement de la page lors de la soumission
+        await submitNewProject(); // Appel de la fonction pour soumettre un projet
+    });
+
+    // Remplir le bouton de catégories avec les catégories disponibles
+    fetchCategorieSelect().then(categories => CategorySelector(categories));
+
+    // Flèche de retour en arrière
+    const arrowIcon = addPhotoModal.querySelector('.arrow');
+    arrowIcon.addEventListener('click', () => {
+        addPhotoModal.style.display = 'none'; // masque la partie ajout de photos de la modale
+        galleryModal.style.display = 'block'; // affiche la partie galerie de la modale
+    });
+}
+
+buttonAddPhoto.addEventListener('click', openAddPhotoModal);
+
+
+async function submitNewProject() {
+    const title = document.getElementById('photo-title').value;
+    const categoryId = document.getElementById('category-selector').value;
+    const fileInput = document.getElementById('photo-file');
+    const file = fileInput.files[0];
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('category', categoryId);
+    formData.append('image', file);
+
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:5678/api/works', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            const newProject = await response.json();
+            displayNewProject(newProject);
+            alert("Projet ajouté avec succès !");
+            document.getElementById('add-photo-form').reset();
+            addPhotoModal.style.display = 'none';
+            overlay.style.display = 'none';
+        } else {
+            alert("Erreur lors de l'ajout du projet.");
+        }
+    } catch (error) {
+        console.error("Erreur réseau :", error);
+        alert("Erreur réseau lors de l'ajout du projet.");
+    }
+}
+
+function displayNewProject(project) {
+    const minigallery = document.getElementById('mini-gallery');
+
+    const figure = document.createElement('figure');
+    figure.classList.add('gallery-item');
+
+    const img = document.createElement('img');
+    img.src = project.imageUrl;
+    img.alt = project.title;
+
+    const trashIcon = document.createElement('i');
+    trashIcon.classList.add('fa-solid', 'fa-trash-can', 'trash-icon');
+    trashIcon.style.color = '#fcfcfd';
+    trashIcon.setAttribute('data-id', project.id);
+
+    trashIcon.addEventListener('click', () => {
+        deleteProject(project.id);
+    });
+
+    figure.appendChild(img);
+    figure.appendChild(trashIcon);
+    minigallery.appendChild(figure);
+}
+
+
+// Fonction pour récupérer les catégories depuis l'API
+async function fetchCategorieSelect() {
+    try {
+        const response = await fetch('http://localhost:5678/api/categories');
+        const categories = await response.json();
+        return categories;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des catégories :', error);
+        return [];
+    }
+}
+
+// Fonction pour remplir le sélecteur de catégories
+function CategorySelector(categories) {
+    const categorySelect = document.getElementById('category-selector');
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+    });
+}
+
+
+
+
 // Fonction pour supprimer des projets
 async function deleteProject(projectId) {
     try {
@@ -291,94 +455,7 @@ function addTrashIconListeners() {
     });
 }
 
-// Fonction pour récupérer les projets depuis l'API
-async function fetchMinigallery() {
-    try {
-        const response = await fetch('http://localhost:5678/api/works');
-        const portfolioMinigallery = await response.json();
-        displayMinigallery(portfolioMinigallery);
 
-    } catch (error) {
-        console.error('Erreur lors de la récupération des projets :', error);
-    }
-}
-
-// Appel de la fonction pour récupérer les projets du portfolio et les afficher
-fetchMinigallery();
-
-
-// Sélectionner le bouton et les articles
-const buttonAddPhoto = document.getElementById('button-addphoto');
-const galleryModal = document.getElementById('gallery-modal');
-const addPhotoModal = document.getElementById('addphoto-modal');
-
-// Fonction pour ouvrir la modale d'ajout de photo
-function openAddPhotoModal() {
-    // Masquer la galerie et afficher la modale d'ajout de photo
-    galleryModal.style.display = 'none';
-    addPhotoModal.classList.remove('hidden');
-
-    addPhotoModal.innerHTML = `
-    <div class="close-div">
-        <span class="arrow"><i class="fa-solid fa-arrow-left custom-arrow"></i></span>
-        <span class="close-button"><i class="fa-solid fa-xmark"></i></span>
-    </div>
-    <h2>Ajout photo</h2>
-    <form id="add-photo-form">
-        <div class="addphoto-rectangle">
-            <i class="fa-regular fa-image custom-icon" style="color: #b9c5cc;"></i>
-            <div class="rectangle-button">
-                <input type="file" id="photo-file" name="photo-file" accept="image/*" required style="display: none;"><br>
-                <label for="photo-file" class="custom-file-label">+ Ajouter photo</label>
-            </div>
-            <p>jpg, png : 4mo max</p>
-        </div>
-        <label for="photo-title">Titre</label><br>
-        <input type="text" id="photo-title" name="photo-title" required><br>
-        <label for="category">Catégorie</label><br>
-        <select id="category-selector" name="category" required>
-            <option value=""></option>
-        </select><br>
-        <div class="horizontal-line"></div>
-        <button id="validate-button" type="submit">Valider</button>
-    </form>
-    `;
-
-    // Remplir le bouton de catégories avec les catégories disponibles
-    fetchCategorieSelect().then(categories => CategorySelector(categories));
-
-    // Flèche de retour en arrière
-    const arrowIcon = addPhotoModal.querySelector('.arrow');
-    arrowIcon.addEventListener('click', () => {
-        addPhotoModal.style.display = 'none'; // masque la partie ajout de photos de la modale
-        galleryModal.style.display = 'block'; // affiche la partie galerie de la modale
-    });
-}
-
-buttonAddPhoto.addEventListener('click', openAddPhotoModal);
-
-// Fonction pour récupérer les catégories depuis l'API
-async function fetchCategorieSelect() {
-    try {
-        const response = await fetch('http://localhost:5678/api/categories');
-        const categories = await response.json();
-        return categories;
-    } catch (error) {
-        console.error('Erreur lors de la récupération des catégories :', error);
-        return [];
-    }
-}
-
-// Fonction pour remplir le sélecteur de catégories
-function CategorySelector(categories) {
-    const categorySelect = document.getElementById('category-selector');
-    categories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category.id;
-        option.textContent = category.name;
-        categorySelect.appendChild(option);
-    });
-}
 
 
 
