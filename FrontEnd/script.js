@@ -231,26 +231,64 @@ function displayMinigallery(projects) {
     minigallery.innerHTML = ''; // Vider la galerie pour éviter la duplication
 
     // Utilisation d'une boucle for pour parcourir les projets
-    for (let i = 0; i < projects.length; i++) {
-        const project = projects[i]; // Accède à chaque projet
-
+    projects.forEach(project => {
         const figure = document.createElement('figure');
-        figure.classList.add('gallery-item'); //Ajout de classe pour le style
+        figure.classList.add('gallery-item');
 
         const img = document.createElement('img');
-        const trashIcon = document.createElement('i') // créer l'élément pour l'icône de poubelle
-
         img.src = project.imageUrl;
         img.alt = project.title;
 
-        // Configuration de l'icône de poubelle
-        trashIcon.classList.add('fa-solid', 'fa-trash-can', 'trash-icon'); // Ajoute les classes Font Awesome + la classe custom
+        const trashIcon = document.createElement('i');
+        trashIcon.classList.add('fa-solid', 'fa-trash-can', 'trash-icon');
         trashIcon.style.color = '#fcfcfd';
+        trashIcon.setAttribute('data-id', project.id); // Attribuer l'ID du projet
 
+        // Ajouter l'icône de poubelle à la figure
         figure.appendChild(img);
         figure.appendChild(trashIcon);
         minigallery.appendChild(figure);
+    })
+
+    // Ecouteur de clic pour chaque icône de poubelle après l'affichage
+    addTrashIconListeners();
+}
+
+// Fonction pour supprimer des projets
+async function deleteProject(projectId) {
+    try {
+        const token = localStorage.getItem('token'); // Récupérer le token d'authentification
+        const response = await fetch(`http://localhost:5678/api/works/${projectId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            // Si la suppression est réussie, retirer l'élément de la galerie
+            const projectElement = document.querySelector(`.trash-icon[data-id="${projectId}"]`).closest('.gallery-item');
+            if (projectElement) {
+                projectElement.remove();
+            }
+            console.log('Projet supprimé avec succès');
+        } else {
+            console.error('Erreur lors de la suppression du projet');
+        }
+    } catch (error) {
+        console.error('Erreur réseau lors de la suppression du projet :', error);
     }
+}
+
+// Fonction pour écouter les clics sur les poubelles
+function addTrashIconListeners() {
+    const trashIcons = document.querySelectorAll('.trash-icon');
+    trashIcons.forEach(icon => {
+        icon.addEventListener('click', (event) => {
+            const projectId = event.target.getAttribute('data-id'); // Récupérer l'ID du projet
+            deleteProject(projectId); // Appeler la fonction pour supprimer le projet
+        });
+    });
 }
 
 // Fonction pour récupérer les projets depuis l'API
