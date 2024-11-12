@@ -295,6 +295,7 @@ function openAddPhotoModal() {
             <div class="rectangle-button">
                 <input type="file" id="photo-file" name="photo-file" accept="image/*" required style="display: none;"><br>
                 <label for="photo-file" class="custom-file-label">+ Ajouter photo</label>
+                <img id="preview-photo" style="display:none;" alt="aperçu de la photo">
             </div>
             <p>jpg, png : 4mo max</p>
         </div>
@@ -308,6 +309,43 @@ function openAddPhotoModal() {
         <button id="validate-button" type="submit">Valider</button>
     </form>
     `;
+
+    // Re-récupérer les éléments dynamiques et ajouter l'écouteur
+    const fileInput = document.getElementById('photo-file');
+    const previewPhoto = document.getElementById('preview-photo');
+
+
+      // Assurez-vous que les éléments existent avant d'ajouter les écouteurs
+      if (fileInput && previewPhoto) {
+        fileInput.addEventListener('change', function() {
+            const file = fileInput.files[0];
+    
+            if (file) {
+                const reader = new FileReader();
+    
+                reader.onload = function(e) {
+                    // Affiche l'image dans l'aperçu
+                    previewPhoto.src = e.target.result;
+                    previewPhoto.style.display = 'block'; // s'assure que l'image est visible
+                    document.querySelector('.custom-file-label').style.display = 'none'; // cache le label
+                };
+    
+                // En cas d'erreur
+                reader.onerror = function() {
+                    console.error("Erreur lors du chargement de l'image");
+                    alert("Impossible d'afficher l'aperçu de l'image");
+                };
+    
+                // Lis le fichier en tant qu'URL de données
+                reader.readAsDataURL(file);
+            } else {
+                previewPhoto.style.display = 'none'; // cache l'aperçu si aucun fichier n'est sélectionné
+                document.querySelector('.custom-file-label').style.display = 'block';
+            }
+        });
+    } else {
+        console.error("L'élément d'entrée de fichier ou l'aperçu de la photo est manquant.");
+    }
 
     // Sélectionnez le formulaire et ajoutez un écouteur de soumission
     const addPhotoForm = document.getElementById('add-photo-form');
@@ -330,19 +368,37 @@ function openAddPhotoModal() {
 buttonAddPhoto.addEventListener('click', openAddPhotoModal);
 
 
+
+
+// Fonction de soumission d'un nouveau projet depuis la modale
 async function submitNewProject() {
     const title = document.getElementById('photo-title').value;
     const categoryId = document.getElementById('category-selector').value;
-    const fileInput = document.getElementById('photo-file');
+//    const fileInput = document.getElementById('photo-file');
     const file = fileInput.files[0];
+//    const previewPhoto = document.getElementById('preview-photo');
+
+    // Validation des champs requis
+    if (!title || !categoryId || !file) {
+        alert("Veuillez remplir tous les champs et sélectionner une image.");
+        return;
+    }
 
     const formData = new FormData();
     formData.append('title', title);
     formData.append('category', categoryId);
     formData.append('image', file);
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert("Vous devez être connecté pour ajouter un projet.");
+        return;
+    }
+
     try {
-        const token = localStorage.getItem('token');
+        // Affiche un indicateur de chargement
+        document.getElementById('submit-button').disabled = true;
+
         const response = await fetch('http://localhost:5678/api/works', {
             method: 'POST',
             headers: {
@@ -356,6 +412,8 @@ async function submitNewProject() {
             displayNewProject(newProject);
             alert("Projet ajouté avec succès !");
             document.getElementById('add-photo-form').reset();
+            previewPhoto.style.display = 'none'; // Masque l'aperçu après ajout
+            document.querySelector('.custom-file-label').style.display = 'block';
             addPhotoModal.style.display = 'none';
             overlay.style.display = 'none';
         } else {
@@ -364,8 +422,11 @@ async function submitNewProject() {
     } catch (error) {
         console.error("Erreur réseau :", error);
         alert("Erreur réseau lors de l'ajout du projet.");
+    } finally {
+        document.getElementById('submit-button').disabled = false;
     }
 }
+
 
 function displayNewProject(project) {
     const minigallery = document.getElementById('mini-gallery');
