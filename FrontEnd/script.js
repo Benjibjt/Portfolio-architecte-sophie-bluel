@@ -295,8 +295,8 @@ function openAddPhotoModal() {
             <div class="rectangle-button">
                 <input type="file" id="photo-file" name="photo-file" accept="image/*" required style="display: none;"><br>
                 <label for="photo-file" class="custom-file-label">+ Ajouter photo</label>
-                <img id="preview-photo" style="display:none;" alt="aperçu de la photo">
             </div>
+            <img id="preview-photo" style="display:none;" alt="aperçu de la photo">
             <p>jpg, png : 4mo max</p>
         </div>
         <label for="photo-title">Titre</label><br>
@@ -313,10 +313,10 @@ function openAddPhotoModal() {
     // Re-récupérer les éléments dynamiques et ajouter l'écouteur
     const fileInput = document.getElementById('photo-file');
     const previewPhoto = document.getElementById('preview-photo');
+    const addPhotoRectangle = document.querySelector('.addphoto-rectangle');
 
-
-      // Assurez-vous que les éléments existent avant d'ajouter les écouteurs
-      if (fileInput && previewPhoto) {
+    // Assure que les éléments existent avant d'ajouter les écouteurs
+    if (fileInput && previewPhoto && addPhotoRectangle) {
         fileInput.addEventListener('change', function() {
             const file = fileInput.files[0];
     
@@ -326,8 +326,14 @@ function openAddPhotoModal() {
                 reader.onload = function(e) {
                     // Affiche l'image dans l'aperçu
                     previewPhoto.src = e.target.result;
-                    previewPhoto.style.display = 'block'; // s'assure que l'image est visible
-                    document.querySelector('.custom-file-label').style.display = 'none'; // cache le label
+                    previewPhoto.style.display = 'block'; // Affiche l'aperçu de l'image
+                    
+                    // Masquer les autres contenus de la boîte rectangulaire
+                    Array.from(addPhotoRectangle.children).forEach(child => {
+                        if (child !== previewPhoto) {
+                            child.style.display = 'none';
+                        }
+                    });
                 };
     
                 // En cas d'erreur
@@ -336,11 +342,17 @@ function openAddPhotoModal() {
                     alert("Impossible d'afficher l'aperçu de l'image");
                 };
     
-                // Lis le fichier en tant qu'URL de données
+                // Lit le fichier en tant qu'URL de données
                 reader.readAsDataURL(file);
             } else {
-                previewPhoto.style.display = 'none'; // cache l'aperçu si aucun fichier n'est sélectionné
-                document.querySelector('.custom-file-label').style.display = 'block';
+                previewPhoto.style.display = 'none'; // Cache l'aperçu si aucun fichier n'est sélectionné
+                
+                // Réaffiche le contenu de la boîte rectangulaire
+                Array.from(addPhotoRectangle.children).forEach(child => {
+                    if (child !== previewPhoto) {
+                        child.style.display = 'block';
+                    }
+                });
             }
         });
     } else {
@@ -360,8 +372,8 @@ function openAddPhotoModal() {
     // Flèche de retour en arrière
     const arrowIcon = addPhotoModal.querySelector('.arrow');
     arrowIcon.addEventListener('click', () => {
-        addPhotoModal.style.display = 'none'; // masque la partie ajout de photos de la modale
-        galleryModal.style.display = 'block'; // affiche la partie galerie de la modale
+        addPhotoModal.style.display = 'none'; // Masque la partie ajout de photos de la modale
+        galleryModal.style.display = 'block'; // Affiche la partie galerie de la modale
     });
 }
 
@@ -374,9 +386,7 @@ buttonAddPhoto.addEventListener('click', openAddPhotoModal);
 async function submitNewProject() {
     const title = document.getElementById('photo-title').value;
     const categoryId = document.getElementById('category-selector').value;
-//    const fileInput = document.getElementById('photo-file');
     const file = fileInput.files[0];
-//    const previewPhoto = document.getElementById('preview-photo');
 
     // Validation des champs requis
     if (!title || !categoryId || !file) {

@@ -403,7 +403,12 @@ ul li a {
 	margin-bottom: 53px;
 }
 
+#preview-photo {
+	height: 169px;
+	object-fit: contain; 
+	position: absolute;
 
+}
 
 /* style pour la croix de modale */
 .close-button {
@@ -420,6 +425,7 @@ ul li a {
 	justify-content: space-around; 
 	align-items: center; 
 	margin-bottom: 31px;
+	overflow: hidden; /* pour éviter que l'image dépasse les limites */
 }
 
 .custom-icon {
