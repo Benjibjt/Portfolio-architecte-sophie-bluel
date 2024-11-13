@@ -397,9 +397,7 @@ ul li a {
 	border-radius: 60px; 
 	width: 237px;
 	height: 36px;
-	color: white;
 	padding: 0%;
-	background-color: #A7A7A7;
 	margin-bottom: 53px;
 }
 
@@ -408,6 +406,18 @@ ul li a {
 	object-fit: contain; 
 	position: absolute;
 
+}
+
+
+/* pour le bouton Valider */
+.button-inactive {
+	background-color: #A7A7A7;
+	color: white;
+}
+
+.button-active {
+    background-color: #1D6154;
+    color: white;
 }
 
 /* style pour la croix de modale */
