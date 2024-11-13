@@ -228,12 +228,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-// Fonction pour afficher les éléments du portfolio dans la mini galerie de la modale (reprise sur la fonction displayPortfolio )
+// Fonction pour afficher les éléments du portfolio dans la mini galerie de la modale (reprise sur la fonction displayPortfolio)
 function displayMinigallery(projects) {
     const minigallery = document.getElementById('mini-gallery');
     minigallery.innerHTML = ''; // Vider la galerie pour éviter la duplication
 
-    // Utilisation d'une boucle for pour parcourir les projets
+    // Utilisation d'une boucle pour parcourir les projets
     projects.forEach(project => {
         const figure = document.createElement('figure');
         figure.classList.add('gallery-item');
@@ -247,13 +247,15 @@ function displayMinigallery(projects) {
         trashIcon.style.color = '#fcfcfd';
         trashIcon.setAttribute('data-id', project.id); // Attribuer l'ID du projet
 
-        // Ajouter l'icône de poubelle à la figure
+        // Ajouter l'icône de poubelle et l'image à la figure
         figure.appendChild(img);
         figure.appendChild(trashIcon);
-        minigallery.appendChild(figure);
-    })
 
-    // Ecouteur de clic pour chaque icône de poubelle après l'affichage
+        // Ajouter la figure à la mini-galerie
+        minigallery.appendChild(figure);
+    });
+
+    // Met à jour les écouteurs de clic sur les icônes de poubelle après l'affichage
     addTrashIconListeners();
 }
 
@@ -269,7 +271,7 @@ async function fetchMinigallery() {
     }
 }
 
-// Appel de la fonction pour récupérer les projets du portfolio et les afficher
+// Appel de la fonction pour récupérer les projets du portfolio et les afficher dans la mini-gallery
 fetchMinigallery();
 
 
@@ -428,11 +430,13 @@ async function submitNewProject() {
 
         if (response.ok) {
             const newProject = await response.json();
-            displayNewProject(newProject);
+            displayNewProject(newProject); // Mise à jour de la galerie principale
+            fetchMinigallery(); // Mise à jour de la MiniGallery sans rechargement
             alert("Projet ajouté avec succès !");
             document.getElementById('add-photo-form').reset();
             addPhotoModal.style.display = 'none';
             overlay.style.display = 'none';
+
         } else {
             alert("Erreur lors de l'ajout du projet.");
         }
@@ -442,29 +446,36 @@ async function submitNewProject() {
     }
 }
 
+
 function displayNewProject(project) {
-    const minigallery = document.getElementById('mini-gallery');
+    const gallery = document.getElementById('gallery');
 
-    const figure = document.createElement('figure');
-    figure.classList.add('gallery-item');
+    // Fonction pour créer un élément de projet pour la galerie principale (image + titre)
+    const createGalleryItem = (project) => {
+        const figure = document.createElement('figure');
+        figure.classList.add('gallery-item');
+        figure.setAttribute('data-id', project.id); // Ajoute data-id pour identifier chaque projet
 
-    const img = document.createElement('img');
-    img.src = project.imageUrl;
-    img.alt = project.title;
+        const img = document.createElement('img');
+        img.src = project.imageUrl;
+        img.alt = project.title;
 
-    const trashIcon = document.createElement('i');
-    trashIcon.classList.add('fa-solid', 'fa-trash-can', 'trash-icon');
-    trashIcon.style.color = '#fcfcfd';
-    trashIcon.setAttribute('data-id', project.id);
+        const figcaption = document.createElement('figcaption');
+        figcaption.textContent = project.title;
 
-    trashIcon.addEventListener('click', () => {
-        deleteProject(project.id);
-    });
+        figure.appendChild(img);
+        figure.appendChild(figcaption);
 
-    figure.appendChild(img);
-    figure.appendChild(trashIcon);
-    minigallery.appendChild(figure);
+        return figure;
+    };
+
+    // Ajouter le projet à la galerie principale
+    gallery.appendChild(createGalleryItem(project));
 }
+
+
+
+
 
 
 
@@ -489,7 +500,6 @@ async function fetchCategorieSelect() {
 
 
 
-// Fonction pour supprimer des projets
 async function deleteProject(projectId) {
     try {
         const token = localStorage.getItem('token'); // Récupérer le token d'authentification
@@ -501,12 +511,20 @@ async function deleteProject(projectId) {
         });
 
         if (response.ok) {
-            // Si la suppression est réussie, retirer l'élément de la galerie
-            const projectElement = document.querySelector(`.trash-icon[data-id="${projectId}"]`).closest('.gallery-item');
-            if (projectElement) {
-                projectElement.remove();
-            }
             console.log('Projet supprimé avec succès');
+
+            // Supprimer l'élément de la MiniGallery
+            const miniGalleryItem = document.querySelector(`.trash-icon[data-id="${projectId}"]`).closest('.gallery-item');
+            if (miniGalleryItem) {
+                miniGalleryItem.remove();
+            }
+
+            // Supprimer l'élément de la galerie principale
+            const mainGalleryItem = document.querySelector(`#gallery .gallery-item[data-id="${projectId}"]`);
+            if (mainGalleryItem) {
+                mainGalleryItem.remove();
+            }
+
         } else {
             console.error('Erreur lors de la suppression du projet');
         }
@@ -514,6 +532,8 @@ async function deleteProject(projectId) {
         console.error('Erreur réseau lors de la suppression du projet :', error);
     }
 }
+
+
 
 // Fonction pour écouter les clics sur les poubelles
 function addTrashIconListeners() {
