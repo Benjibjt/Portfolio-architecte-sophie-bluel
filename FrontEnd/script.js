@@ -212,7 +212,6 @@ window.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('http://localhost:5678/api/works');
             const portfolioProjects = await response.json();
-            console.log("Projets récupérés depuis l'API :", portfolioProjects); // log des projets récupérés
             displayPortfolio(portfolioProjects);
             await fetchFilterButtons(portfolioProjects); // Assurer que les boutons sont chargés avant d'appeler updateLogin
             updateLogin(); // mise à jour de l'affichage après le chargement des filtres
@@ -271,7 +270,7 @@ async function fetchMinigallery() {
 }
 
 // Appel de la fonction pour récupérer les projets du portfolio et les afficher
-    fetchMinigallery();
+fetchMinigallery();
 
 
 // Sélectionner le bouton et les articles
@@ -392,46 +391,33 @@ function openAddPhotoModal() {
             option.textContent = category.name;
             categorySelect.appendChild(option);
         });
-    }
+    };
+
+    // Sélectionnez le formulaire et ajoutez un écouteur de soumission
+    const addPhotoForm = document.getElementById('add-photo-form');
+    addPhotoForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Empêche le rechargement de la page lors de la soumission
+        await submitNewProject(); // Appel de la fonction pour soumettre un projet
+    });
 }
 
 buttonAddPhoto.addEventListener('click', openAddPhotoModal);
 
 
 
-
-
-
-// Fonction de soumission d'un nouveau projet depuis la modale
 async function submitNewProject() {
-    console.log("soumission du projet");
-
-    const fileInput = document.getElementById('photo-file'); 
     const title = document.getElementById('photo-title').value;
     const categoryId = document.getElementById('category-selector').value;
+    const fileInput = document.getElementById('photo-file');
     const file = fileInput.files[0];
-
-    // Validation des champs requis
-    if (!title || !categoryId || !file) {
-        alert("Veuillez remplir tous les champs et sélectionner une image.");
-        return;
-    }
 
     const formData = new FormData();
     formData.append('title', title);
     formData.append('category', categoryId);
     formData.append('image', file);
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-        alert("Vous devez être connecté pour ajouter un projet.");
-        return;
-    }
-
     try {
-        // Affiche un indicateur de chargement
-        validateButton.disabled = true;
-
+        const token = localStorage.getItem('token');
         const response = await fetch('http://localhost:5678/api/works', {
             method: 'POST',
             headers: {
@@ -444,18 +430,7 @@ async function submitNewProject() {
             const newProject = await response.json();
             displayNewProject(newProject);
             alert("Projet ajouté avec succès !");
-            console.log("Projet ajouté :", newProject); // Vérifiez les données du projet retournées
-
-            // Rafraîchit la mini-galerie pour afficher le projet ajouté
-            // fetchMinigallery();
-
-            // Rafraîchit le portfolio 
-            fetchProjects();
-
-            // Réinitialise le formulaire
             document.getElementById('add-photo-form').reset();
-            previewPhoto.style.display = 'none'; // Masque l'aperçu après ajout
-            document.querySelector('.custom-file-label').style.display = 'block';
             addPhotoModal.style.display = 'none';
             overlay.style.display = 'none';
         } else {
@@ -464,58 +439,37 @@ async function submitNewProject() {
     } catch (error) {
         console.error("Erreur réseau :", error);
         alert("Erreur réseau lors de l'ajout du projet.");
-    } finally {
-        validateButton.disabled = false;
     }
 }
 
-
-
 function displayNewProject(project) {
-
-    console.log("affichage du nouveau projet :", project); // vérifie les données du projet
-    if (!project.imageUrl || !project.title) {
-        console.error("Les données du projet sont incomplètes :", project);
-        alert("Le projet a des données manquantes !");
-        return;
-    }
-
-
     const minigallery = document.getElementById('mini-gallery');
 
-    // Création de l'élément figure pour le projet
     const figure = document.createElement('figure');
     figure.classList.add('gallery-item');
 
-    // Création de l'image du projet
     const img = document.createElement('img');
     img.src = project.imageUrl;
     img.alt = project.title;
 
-    // Création de l'icône de suppression (poubelle)
     const trashIcon = document.createElement('i');
     trashIcon.classList.add('fa-solid', 'fa-trash-can', 'trash-icon');
     trashIcon.style.color = '#fcfcfd';
     trashIcon.setAttribute('data-id', project.id);
 
-    // Evénement pour supprimer le projet au clic
     trashIcon.addEventListener('click', () => {
         deleteProject(project.id);
     });
 
-    // Ajout des éléments au figure
     figure.appendChild(img);
-    figure.appendChild(trashIcon); 
-
-    // Ajout du projet à la galerie minigallery
+    figure.appendChild(trashIcon);
     minigallery.appendChild(figure);
-
-
-
 }
 
-fetchProjects();
-fetchMinigallery();
+
+
+
+
 
 
 

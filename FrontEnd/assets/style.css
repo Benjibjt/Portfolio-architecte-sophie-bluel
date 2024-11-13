@@ -472,7 +472,7 @@ ul li a {
 
 /* Ajout galerie du pop-up */
 
-.mini-gallery {
+#mini-gallery {
 	width: 420px;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -481,7 +481,8 @@ ul li a {
 	
 }
 
-.mini-gallery img {
+
+#mini-gallery img {
 	width: 100%;
 	padding: 0%;
 	margin: 0%;
