@@ -78,7 +78,7 @@ function displayFilterButtons(filterButtons) {
                 break;
         }
 
-    });
+    }); 
 }
 
 // Fonction pour récupérer les boutons de filtres depuis l'API
@@ -151,6 +151,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 overlay.style.display = 'block';
                 galleryModal.style.display = 'block'; // Assure que galleryModal est visible
                 addPhotoModal.style.display = 'none'; // Masque addPhotoModal si elle est ouverte
+                
             });
     
         } else {
@@ -517,14 +518,20 @@ async function deleteProject(projectId) {
             const miniGalleryItem = document.querySelector(`.trash-icon[data-id="${projectId}"]`).closest('.gallery-item');
             if (miniGalleryItem) {
                 miniGalleryItem.remove();
+                fetchMinigallery(); // Mise à jour de la MiniGallery sans rechargement
             }
 
             // Supprimer l'élément de la galerie principale
             const mainGalleryItem = document.querySelector(`#gallery .gallery-item[data-id="${projectId}"]`);
             if (mainGalleryItem) {
                 mainGalleryItem.remove();
+                
             }
 
+            await fetchProjects();
+
+           
+            
         } else {
             console.error('Erreur lors de la suppression du projet');
         }
@@ -542,7 +549,9 @@ function addTrashIconListeners() {
         icon.addEventListener('click', (event) => {
             const projectId = event.target.getAttribute('data-id'); // Récupérer l'ID du projet
             deleteProject(projectId); // Appeler la fonction pour supprimer le projet
+            
         });
+        
     });
 }
 
