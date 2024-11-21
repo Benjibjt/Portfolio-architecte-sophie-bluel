@@ -325,6 +325,13 @@ function openAddPhotoModal() {
     const validateButton = document.getElementById('validate-button');
     const addPhotoRectangle = document.querySelector('.addphoto-rectangle');
 
+    // Ecouteur pour la flèche de retour
+    const arrowBack = addPhotoModal.querySelector('.arrow');
+    arrowBack.addEventListener('click', () => {
+        galleryModal.style.display = 'block'; // Réafficher la galerie
+        addPhotoModal.style.display = 'none'; // Cacher l'article d'ajout de photos 
+    });
+
     // Fonction pour vérifier si tous les champs sont remplis
     function checkFormCompletion() {
         if (fileInput.files.length > 0 && photoTitleInput.value && categorySelector.value) {
